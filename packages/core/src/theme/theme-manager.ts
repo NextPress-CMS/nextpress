@@ -36,6 +36,17 @@ import {
 let activeTheme: LoadedTheme | null = null;
 let discoveredThemes: DiscoveredTheme[] = [];
 
+/**
+ * Pre-registered themes (statically imported for bundler compatibility).
+ * Use registerTheme() to add themes before the manager tries dynamic import.
+ */
+const preRegistered = new Map<string, LoadedTheme>();
+
+/** Register a pre-bundled theme (call from app startup) */
+export function registerTheme(slug: string, theme: LoadedTheme) {
+  preRegistered.set(slug, theme);
+}
+
 // ── Theme directory ──
 
 const THEMES_DIR = join(process.cwd(), "../../themes");
@@ -93,6 +104,13 @@ export const themeManager = {
    * In development, it runs on first request and on HMR.
    */
   async load(slug: string): Promise<LoadedTheme> {
+    // Check for pre-registered (statically bundled) themes first
+    const preReg = preRegistered.get(slug);
+    if (preReg) {
+      activeTheme = preReg;
+      return activeTheme;
+    }
+
     const discovered = this.getDiscovered().find((t) => t.slug === slug);
     if (!discovered) {
       throw new Error(`Theme not found: ${slug}`);

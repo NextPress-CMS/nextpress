@@ -182,13 +182,23 @@ export const settingsService = {
       {
         slug: "permalinks", name: "Permalinks", source: "core",
         fields: [
-          { key: "post_structure", label: "Post URL structure", type: "select", defaultValue: "/:slug", options: [
-            { label: "/:slug", value: "/:slug" },
-            { label: "/blog/:slug", value: "/blog/:slug" },
-            { label: "/:year/:month/:slug", value: "/:year/:month/:slug" },
+          { key: "post_structure", label: "Post URL structure", type: "select", defaultValue: "/:slug", description: "Choose how post URLs are structured on your site.", options: [
+            { label: "/:slug  —  e.g. /my-post-title", value: "/:slug" },
+            { label: "/blog/:slug  —  e.g. /blog/my-post-title", value: "/blog/:slug" },
+            { label: "/:year/:month/:slug  —  e.g. /2026/04/my-post-title", value: "/:year/:month/:slug" },
           ]},
           { key: "category_base", label: "Category base", type: "text", defaultValue: "category" },
           { key: "tag_base", label: "Tag base", type: "text", defaultValue: "tag" },
+        ],
+      },
+      {
+        slug: "media", name: "Media", description: "Upload limits and image sizes", source: "core",
+        fields: [
+          { key: "max_upload_size_mb", label: "Max upload size (MB)", type: "number", defaultValue: 50, validation: { min: 1, max: 500 } },
+          { key: "thumbnail_width", label: "Thumbnail width (px)", type: "number", defaultValue: 150, validation: { min: 50, max: 1000 } },
+          { key: "thumbnail_height", label: "Thumbnail height (px)", type: "number", defaultValue: 150, validation: { min: 50, max: 1000 } },
+          { key: "medium_width", label: "Medium size width (px)", type: "number", defaultValue: 768, validation: { min: 100, max: 3000 } },
+          { key: "large_width", label: "Large size width (px)", type: "number", defaultValue: 1200, validation: { min: 200, max: 5000 } },
         ],
       },
     ];

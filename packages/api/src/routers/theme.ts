@@ -4,17 +4,48 @@ import { router, authedProcedure, permissionProcedure } from "../trpc";
 import { themeManager } from "@nextpress/core/theme/theme-manager";
 import { prisma } from "@nextpress/db";
 
+/**
+ * Skin discovery is injected from the app layer because it reads from
+ * apps/web/public/skins which is not accessible from the core package.
+ */
+let skinLister: (() => Array<{ slug: string; manifest: { name: string; version: string; description?: string; author?: string } }>) | null = null;
+
+export function setSkinLister(lister: () => Array<{ slug: string; manifest: { name: string; version: string; description?: string; author?: string } }>) {
+  skinLister = lister;
+}
+
 export const themeRouter = router({
   list: authedProcedure.query(async ({ ctx }) => {
     const discovered = themeManager.getDiscovered();
     const installs = await prisma.themeInstall.findMany({ where: { siteId: ctx.auth.siteId } });
     const installMap = new Map(installs.map((i) => [i.slug, i]));
-    return discovered.map((d) => ({
+
+    const builtIn = discovered.map((d) => ({
       slug: d.slug, name: d.manifest.name, version: d.manifest.version,
       description: d.manifest.description, author: d.manifest.author,
       isActive: installMap.get(d.slug)?.isActive ?? false,
-      supports: d.manifest.supports,
+      isSkin: false,
     }));
+
+    const skins = (skinLister?.() ?? []).map((s) => ({
+      slug: s.slug,
+      name: s.manifest.name,
+      version: s.manifest.version,
+      description: s.manifest.description,
+      author: s.manifest.author,
+      isActive: installMap.get(s.slug)?.isActive ?? false,
+      isSkin: true,
+    }));
+
+    // Dedupe (skin slug colliding with a built-in — unlikely, but be safe)
+    const seen = new Set<string>();
+    const merged = [...builtIn, ...skins].filter((t) => {
+      if (seen.has(t.slug)) return false;
+      seen.add(t.slug);
+      return true;
+    });
+
+    return merged;
   }),
   activate: permissionProcedure("switch_themes")
     .input(z.object({ slug: z.string() }))

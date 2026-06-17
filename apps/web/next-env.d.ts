@@ -1,29 +1,6 @@
 /// <reference types="next" />
 /// <reference types="next/image-types/global" />
+/// <reference path="./.next/types/routes.d.ts" />
 
-// ============================================================================
-// Auth.js type augmentation
-// ============================================================================
-
-import type { SessionUser } from "@nextpress/core/auth/auth-types";
-
-declare module "next-auth" {
-  interface Session {
-    user: SessionUser & {
-      id: string;
-      email: string;
-    };
-  }
-
-  interface User {
-    id: string;
-    displayName?: string | null;
-  }
-}
-
-declare module "next-auth/jwt" {
-  interface JWT {
-    id: string;
-    displayName?: string | null;
-  }
-}
+// NOTE: This file should not be edited
+// see https://nextjs.org/docs/app/api-reference/config/typescript for more information.

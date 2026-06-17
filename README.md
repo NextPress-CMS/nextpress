@@ -82,6 +82,7 @@ The next step is wiring the monorepo dependencies (`pnpm install`), running the 
 21. [Testing Strategy](#21-testing-strategy)
 22. [Roadmap](#22-roadmap)
 23. [Getting Started](#23-getting-started)
+24. [Contributing & Required Skills](#24-contributing--required-skills)
 
 ---
 
@@ -790,6 +791,118 @@ GOOGLE_CLIENT_SECRET=...
 GITHUB_CLIENT_ID=...
 GITHUB_CLIENT_SECRET=...
 ```
+
+---
+
+## 24. Contributing & Required Skills
+
+NextPress is built to be extended. There are three ways to contribute, each with a different surface area and a different required skill set. Pick the track that matches what you want to build.
+
+| Track | You build | Touches | Risk surface |
+|-------|-----------|---------|--------------|
+| **Theme development** | Layouts, templates, block overrides | `themes/{slug}/` only | Low — sandboxed to one theme |
+| **Plugin development** | Content types, fields, blocks, hooks, admin pages, API routes | `plugins/{slug}/` + `PluginContext` | Medium — controlled API surface |
+| **Core contribution** | The engine itself — services, routers, schema, editor | `packages/*`, `apps/web/` | High — affects everyone |
+
+**Baseline for every track:** TypeScript (we run `strict`), Git/GitHub pull-request flow, and comfort with a pnpm + Turborepo monorepo. Read [Getting Started](#23-getting-started) first and get `pnpm dev` booting before you write any code.
+
+---
+
+### 24.1. Theme Development
+
+Themes control how published content is presented. A theme is layout + a WordPress-style template hierarchy + optional block render overrides. Themes never touch the database or business logic — they receive resolved content and render it.
+
+**Required skills**
+
+- **React Server Components (RSC)** — templates and layouts are server components. Understand the server/client boundary and when `"use client"` is required.
+- **Next.js App Router** — layouts, `generateMetadata`, streaming, and how route groups feed templates.
+- **Tailwind CSS** + plain CSS — styling is Tailwind-first with a per-theme `styles/theme.css`.
+- **The template resolution hierarchy** — most-specific-wins (see [§11 Theme System](#11-theme-system)). Knowing which template fires for a given URL is the core mental model.
+- **Block data shape** — templates receive structured `BlockData[]` (see [§5 Key Interfaces](#5-key-interfaces)), not HTML. Rendering goes through `<BlockRenderer>`; overrides go through `overrideRenderComponent()`.
+
+**What you'll work in**
+
+```
+themes/{slug}/
+├── theme.json              # Manifest, supports, settings schema, templateChoices
+├── layout.tsx              # Root shell (header, footer)
+├── templates/              # index.tsx (required) + single/page/archive/home/...
+├── blocks/                 # Optional per-block render overrides
+├── components/             # Theme-local components
+└── styles/theme.css
+```
+
+**Getting started:** copy `themes/_template/` to `themes/my-theme/`, edit `theme.json`, and start from `templates/index.tsx` (the required fallback). Use `themes/default/` and `themes/twentytwentysix/` as worked references. You do **not** need to understand Prisma, tRPC, or the permission engine to ship a theme.
+
+---
+
+### 24.2. Plugin Development
+
+Plugins extend behavior. They register content types, custom fields, block types, admin pages, API routes, and hook callbacks — all through a single controlled object, `PluginContext`. Plugins never import Prisma or core internals directly; the context is the entire sanctioned surface (see [§10 Plugin System](#10-plugin-system)).
+
+**Required skills**
+
+- **TypeScript interfaces & generics** — you implement `PluginDefinition` and consume the typed `PluginContext` API.
+- **The hook system** — actions (side effects) vs. filters (data transforms), and the 16 hook events. This is how plugins react to content/comment/user/media lifecycle without patching core.
+- **Zod schemas** — custom fields and block attributes are defined as Zod schemas; they're the single source of truth for validation.
+- **The block contract** (if registering blocks) — a server-safe render component in `packages/blocks` and a client-only edit component in `packages/editor`, sharing types but never importing each other. Increment `version` and provide `migrate()` on breaking attribute changes.
+- **REST handler basics** (if registering routes via `ctx.api.registerRoute`) — request/response, the JSON envelope, and auth expectations from [§18 API Design](#18-api-design).
+- **Plugin lifecycle** — `onActivate` / `onDeactivate` / `onUninstall`, dependency declaration in `plugin.json`, and why every registration is source-tagged (clean deactivation).
+
+**What you'll work in**
+
+```
+plugins/{slug}/
+├── plugin.json             # Manifest: slug, version, dependencies, permissions, settings
+├── index.ts                # PluginDefinition: onActivate(ctx) / onDeactivate / onUninstall
+├── components/             # Block edit/render components, admin panels
+└── api/                    # Custom route handlers
+```
+
+**Getting started:** copy `plugins/_template/`, register what you need inside `onActivate(ctx)`. Study `plugins/seo-toolkit/` (fields + meta hooks + settings), `plugins/contact-form/` (custom block + content type + API route), and `plugins/analytics/` (admin page + tracking script) as end-to-end examples. You need to understand `PluginContext` and the hook/Zod model, but **not** the core service implementations behind them.
+
+---
+
+### 24.3. Contributing to NextPress Core
+
+Core work changes the engine that every theme, plugin, and site depends on. This is the highest-skill track and carries the most responsibility — changes here must preserve the dependency direction, type safety, security model, and test coverage.
+
+**Required skills**
+
+- **Advanced TypeScript** — `strict` mode, discriminated unions, generics, and type-level guarantees across package boundaries.
+- **Architecture discipline** — respect the dependency direction (`apps/web → api → core → db`; `core` has **no** React/Next imports; blocks and editor never import each other). See [§1 Architecture](#1-architecture). PRs that violate layering will be rejected regardless of correctness.
+- **Prisma & PostgreSQL** — the 28-model schema, JSONB for blocks/fields, EAV custom fields, `tsvector` FTS, GIN indexes, and writing migrations.
+- **tRPC v11** — the 11 routers, `publicProcedure` / `authedProcedure` / `permissionProcedure`, superjson, and React Query integration.
+- **Auth & RBAC** — the 4-layer enforcement model, 28 permissions, ownership-aware checks, and JWT-per-request role resolution (see [§7](#7-authentication--authorization)). Every mutation needs a guard.
+- **Security model** — the protections in [§20](#20-security-model): DOMPurify on all HTML, CORS allowlists, multi-tenant `siteId` scoping on every query, HMAC webhooks, timing-safe comparisons. Adding a query without `siteId` scoping is a cross-tenant data leak.
+- **Caching & revalidation** — `unstable_cache`, the 10 tag patterns, and callback-injected revalidation (see [§19](#19-caching--revalidation)).
+- **Testing** — Vitest (unit + integration) and Playwright (E2E). New core behavior ships with tests; CI runs lint/typecheck + 3 test tiers (see [§21](#21-testing-strategy)).
+
+**What you'll work in**
+
+```
+packages/core/      # Framework-agnostic CMS logic (no React) — services, hooks, engines
+packages/db/        # Prisma schema, client, seeds, migrations
+packages/api/        # tRPC routers
+packages/blocks/     # Block registry + SSR render components
+packages/editor/     # Block editor + client edit components
+packages/ui/         # Admin design system
+apps/web/           # Next.js app: route groups, lib glue, middleware
+```
+
+**Getting started:** read [§1 Architecture](#1-architecture) through [§5 Key Interfaces](#5-key-interfaces) end to end. Pick a well-scoped issue, keep changes within one layer where possible, add tests, and run `pnpm lint`, `pnpm typecheck`, and the test suite locally before opening a PR. Discuss schema or public-interface changes in an issue first — they ripple across every track above.
+
+---
+
+### Contribution Workflow (all tracks)
+
+1. Fork and branch from `main` (`feat/...`, `fix/...`).
+2. Develop against `pnpm dev`; keep TypeScript green (`strict`, no `any` escapes).
+3. Run `pnpm lint`, `pnpm typecheck`, and `pnpm test` before pushing.
+4. Open a pull request describing **what** changed and **why**; link any related issue.
+5. Ensure CI (lint/typecheck, unit, integration, E2E) passes — see the badges at the top of this README.
+
+PRs are welcome. If you're unsure which track fits your idea or how big the change is, open an issue first.
 
 ---
 

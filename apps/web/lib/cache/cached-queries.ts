@@ -74,10 +74,11 @@ export function getCachedEntryList(
     contentTypeSlug?: string;
     limit?: number;
     termId?: string;
+    sortBy?: "publishedAt" | "menuOrder";
   } = {},
 ) {
-  const { contentTypeSlug, limit = 20, termId } = options;
-  const cacheKey = `entries-${siteId}-${contentTypeSlug ?? "all"}-${termId ?? "none"}-${limit}`;
+  const { contentTypeSlug, limit = 20, termId, sortBy = "publishedAt" } = options;
+  const cacheKey = `entries-${siteId}-${contentTypeSlug ?? "all"}-${termId ?? "none"}-${limit}-${sortBy}`;
 
   return unstable_cache(
     async () => {
@@ -92,9 +93,13 @@ export function getCachedEntryList(
         where.terms = { some: { termId } };
       }
 
+      const orderBy = sortBy === "menuOrder"
+        ? [{ menuOrder: "asc" as const }, { publishedAt: "desc" as const }]
+        : { publishedAt: "desc" as const };
+
       return prisma.contentEntry.findMany({
         where,
-        orderBy: { publishedAt: "desc" },
+        orderBy,
         take: limit,
         select: ENTRY_SELECT,
       });

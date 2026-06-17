@@ -1,7 +1,11 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "plugins": [{ "name": "next" }],
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "module": "ESNext",
     "moduleResolution": "bundler",
     "allowJs": true,
@@ -10,23 +14,56 @@
     "declarationMap": false,
     "incremental": true,
     "paths": {
-      "@/*": ["./"],
-      "@/lib/*": ["./lib/*"],
-      "@/components/*": ["./components/*"],
-      "@/hooks/*": ["./hooks/*"],
-      "@nextpress/core": ["../../packages/core/src"],
-      "@nextpress/core/*": ["../../packages/core/src/*"],
-      "@nextpress/db": ["../../packages/db/src"],
-      "@nextpress/db/*": ["../../packages/db/src/*"],
-      "@nextpress/api": ["../../packages/api/src"],
-      "@nextpress/api/*": ["../../packages/api/src/*"],
-      "@nextpress/blocks": ["../../packages/blocks/src"],
-      "@nextpress/blocks/*": ["../../packages/blocks/src/*"],
-      "@nextpress/editor": ["../../packages/editor/src"],
-      "@nextpress/editor/*": ["../../packages/editor/src/*"],
-      "@nextpress/ui": ["../../packages/ui/src"],
-      "@nextpress/ui/*": ["../../packages/ui/src/*"]
-    }
+      "@/*": [
+        "./"
+      ],
+      "@/lib/*": [
+        "./lib/*"
+      ],
+      "@/components/*": [
+        "./components/*"
+      ],
+      "@/hooks/*": [
+        "./hooks/*"
+      ],
+      "@nextpress/core": [
+        "../../packages/core/src"
+      ],
+      "@nextpress/core/*": [
+        "../../packages/core/src/*"
+      ],
+      "@nextpress/db": [
+        "../../packages/db/src"
+      ],
+      "@nextpress/db/*": [
+        "../../packages/db/src/*"
+      ],
+      "@nextpress/api": [
+        "../../packages/api/src"
+      ],
+      "@nextpress/api/*": [
+        "../../packages/api/src/*"
+      ],
+      "@nextpress/blocks": [
+        "../../packages/blocks/src"
+      ],
+      "@nextpress/blocks/*": [
+        "../../packages/blocks/src/*"
+      ],
+      "@nextpress/editor": [
+        "../../packages/editor/src"
+      ],
+      "@nextpress/editor/*": [
+        "../../packages/editor/src/*"
+      ],
+      "@nextpress/ui": [
+        "../../packages/ui/src"
+      ],
+      "@nextpress/ui/*": [
+        "../../packages/ui/src/*"
+      ]
+    },
+    "jsx": "preserve"
   },
   "include": [
     "next-env.d.ts",
@@ -34,5 +71,9 @@
     "**/*.tsx",
     ".next/types/**/*.ts"
   ],
-  "exclude": ["node_modules", ".next", "__tests__"]
+  "exclude": [
+    "node_modules",
+    ".next",
+    "__tests__"
+  ]
 }

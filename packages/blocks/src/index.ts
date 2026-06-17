@@ -32,3 +32,4 @@ import "./blocks/image";
 import "./blocks/quote";
 import "./blocks/button";
 import "./blocks/columns";
+import "./blocks/html";
