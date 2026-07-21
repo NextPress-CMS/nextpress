@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import { z } from "zod";
 import DOMPurify from "isomorphic-dompurify";
 import { registerBlock } from "../registry";

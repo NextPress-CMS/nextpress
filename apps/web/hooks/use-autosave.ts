@@ -2,7 +2,7 @@
 import { useEffect, useRef, useCallback } from "react";
 
 export function useAutosave(isDirty: boolean, onSave: () => Promise<void>, delay = 5000) {
-  const timerRef = useRef<ReturnType<typeof setTimeout>>();
+  const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const savingRef = useRef(false);
 
   const save = useCallback(async () => {

@@ -228,6 +228,11 @@ function resolveThemesDir(): string {
   return THEMES_DIR;
 }
 
-function DefaultLayout({ children }: { children: React.ReactNode }) {
+function DefaultLayout({
+  children,
+}: {
+  children: React.ReactNode;
+  customizations: Record<string, unknown>;
+}) {
   return children;
 }
