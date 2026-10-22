@@ -20,7 +20,7 @@ export default async function ContentTypesPage() {
               <div className="font-medium">{ct.namePlural}</div>
               <div className="text-xs text-gray-400">{ct.slug} · {ct.entryCount} entries · {ct.fieldCount} fields</div>
             </div>
-            {ct.isSystem && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">System</span>}
+            {ct.isSystem && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded-sm">System</span>}
           </div>
         ))}
       </div>

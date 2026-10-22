@@ -25,7 +25,7 @@ const SYNC_INTERVALS: Array<{ value: SyncInterval; label: string }> = [
 ];
 
 const SELECT_CLASS =
-  "w-full max-w-sm rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-sm transition-colors focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30 disabled:bg-gray-50 disabled:text-gray-400";
+  "w-full max-w-sm rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900 shadow-xs transition-colors focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/30 disabled:bg-gray-50 disabled:text-gray-400";
 
 export default function InstagramSettingsPage() {
   const [settings, setSettings] = useState<InstagramSettings | null>(null);
@@ -77,10 +77,10 @@ export default function InstagramSettingsPage() {
         <InstagramNav />
         <div className="space-y-4">
           {[0, 1, 2].map((i) => (
-            <div key={i} className="animate-pulse rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
-              <div className="h-4 w-32 rounded bg-gray-200" />
-              <div className="mt-4 h-3 w-2/3 rounded bg-gray-100" />
-              <div className="mt-3 h-3 w-1/2 rounded bg-gray-100" />
+            <div key={i} className="animate-pulse rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
+              <div className="h-4 w-32 rounded-sm bg-gray-200" />
+              <div className="mt-4 h-3 w-2/3 rounded-sm bg-gray-100" />
+              <div className="mt-3 h-3 w-1/2 rounded-sm bg-gray-100" />
             </div>
           ))}
         </div>
@@ -182,7 +182,7 @@ function Card({
   children: React.ReactNode;
 }) {
   return (
-    <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+    <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
       <h2 className="text-sm font-semibold text-gray-900">{title}</h2>
       {description && <p className="mt-1 text-sm text-gray-500">{description}</p>}
       <div className="mt-5 space-y-5">{children}</div>
@@ -228,13 +228,13 @@ function Toggle({
         aria-checked={checked}
         aria-label={label}
         onClick={() => onChange(!checked)}
-        className={`relative mt-0.5 h-5 w-9 shrink-0 rounded-full transition-colors duration-200 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-1 ${
+        className={`relative mt-0.5 h-5 w-9 shrink-0 rounded-full transition-colors duration-200 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-1 ${
           checked ? "bg-indigo-600" : "bg-gray-300"
         }`}
       >
         <span
-          className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-sm transition-transform duration-200 ${
-            checked ? "translate-x-[1.125rem]" : "translate-x-0.5"
+          className={`absolute top-0.5 h-4 w-4 rounded-full bg-white shadow-xs transition-transform duration-200 ${
+            checked ? "translate-x-4.5" : "translate-x-0.5"
           }`}
         />
       </button>

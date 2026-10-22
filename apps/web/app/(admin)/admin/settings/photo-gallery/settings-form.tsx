@@ -153,7 +153,7 @@ export function PhotoGallerySettingsForm() {
             placeholder="New collection name"
             onChange={(e) => setNewName(e.target.value)}
             onKeyDown={(e) => e.key === "Enter" && addCollection()}
-            className="flex-1 rounded border border-gray-300 px-3 py-1.5 text-sm"
+            className="flex-1 rounded-sm border border-gray-300 px-3 py-1.5 text-sm"
           />
           <Button onClick={addCollection} disabled={!newName.trim() || saving}>
             Create
@@ -196,7 +196,7 @@ export function PhotoGallerySettingsForm() {
                         <img
                           src={thumbSrc(img)}
                           alt={img.alt}
-                          className="aspect-square w-full rounded object-cover"
+                          className="aspect-square w-full rounded-sm object-cover"
                         />
                         <button
                           type="button"

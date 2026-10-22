@@ -181,7 +181,7 @@ export default function FormGeneratorBlock({
 
   if (status === "sent") {
     return (
-      <div className="np-form-success p-4 bg-green-50 text-green-700 rounded">
+      <div className="np-form-success p-4 bg-green-50 text-green-700 rounded-sm">
         {message}
       </div>
     );

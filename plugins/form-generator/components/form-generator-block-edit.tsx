@@ -121,7 +121,7 @@ export default function FormGeneratorEdit({
 
   if (!isSelected) {
     return (
-      <div className="np-form-generator-edit border-2 border-dashed border-gray-300 rounded p-4">
+      <div className="np-form-generator-edit border-2 border-dashed border-gray-300 rounded-sm p-4">
         <div className="flex items-center gap-2 mb-1">
           <span className="text-lg">📝</span>
           <span className="font-medium">
@@ -136,7 +136,7 @@ export default function FormGeneratorEdit({
   }
 
   return (
-    <div className="np-form-generator-edit border-2 border-blue-300 rounded p-4 space-y-4">
+    <div className="np-form-generator-edit border-2 border-blue-300 rounded-sm p-4 space-y-4">
       <div className="flex items-center gap-2">
         <span className="text-lg">📝</span>
         <span className="font-medium">Form Generator</span>
@@ -174,7 +174,7 @@ export default function FormGeneratorEdit({
         </div>
 
         {fields.map((field, index) => (
-          <div key={field.name} className="border rounded p-2 bg-gray-50">
+          <div key={field.name} className="border rounded-sm p-2 bg-gray-50">
             <div className="flex items-center gap-2">
               <button
                 type="button"

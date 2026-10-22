@@ -145,8 +145,8 @@ export default function InstagramDashboard() {
         <PageHeader title="Instagram" description="Archive and publishing for your connected account." />
         <InstagramNav />
 
-        <div className="rounded-xl border border-gray-200 bg-white px-6 py-14 text-center shadow-sm">
-          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 via-rose-500 to-amber-400">
+        <div className="rounded-xl border border-gray-200 bg-white px-6 py-14 text-center shadow-xs">
+          <div className="mx-auto flex h-14 w-14 items-center justify-center rounded-full bg-linear-to-br from-fuchsia-500 via-rose-500 to-amber-400">
             <Instagram className="h-7 w-7 text-white" />
           </div>
           <h2 className="mt-5 text-lg font-semibold text-gray-900">Connect an Instagram account</h2>
@@ -156,7 +156,7 @@ export default function InstagramDashboard() {
           </p>
           <a
             href={CONNECT_URL}
-            className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-1"
+            className="mt-6 inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-5 py-2.5 text-sm font-medium text-white shadow-xs transition-colors hover:bg-indigo-700 focus-visible:outline-hidden focus-visible:ring-2 focus-visible:ring-indigo-500/50 focus-visible:ring-offset-1"
           >
             <Instagram className="h-4 w-4" />
             Connect Instagram
@@ -187,7 +187,7 @@ export default function InstagramDashboard() {
             </Button>
             <a
               href="/admin/plugins/instagram-post/import"
-              className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+              className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs transition-colors hover:bg-indigo-700"
             >
               <Download className="h-4 w-4" />
               Import posts
@@ -220,9 +220,9 @@ export default function InstagramDashboard() {
       )}
 
       {/* ── Account card ── */}
-      <section className="mb-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <section className="mb-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
         <div className="flex flex-wrap items-center gap-4 border-b border-gray-100 px-6 py-5">
-          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-gradient-to-br from-fuchsia-500 via-rose-500 to-amber-400">
+          <div className="flex h-12 w-12 shrink-0 items-center justify-center rounded-full bg-linear-to-br from-fuchsia-500 via-rose-500 to-amber-400">
             <Instagram className="h-6 w-6 text-white" />
           </div>
 
@@ -294,7 +294,7 @@ export default function InstagramDashboard() {
       </div>
 
       {/* ── Danger zone ── */}
-      <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white px-6 py-5 shadow-sm">
+      <section className="flex flex-wrap items-center justify-between gap-4 rounded-xl border border-gray-200 bg-white px-6 py-5 shadow-xs">
         <div>
           <h3 className="text-sm font-semibold text-gray-900">Disconnect Instagram</h3>
           <p className="mt-0.5 text-sm text-gray-500">
@@ -373,12 +373,12 @@ function Stat({
   return href ? (
     <a
       href={href}
-      className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm transition-all hover:border-gray-300 hover:shadow-md"
+      className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs transition-all hover:border-gray-300 hover:shadow-md"
     >
       {body}
     </a>
   ) : (
-    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-sm">{body}</div>
+    <div className="rounded-xl border border-gray-200 bg-white p-5 shadow-xs">{body}</div>
   );
 }
 
@@ -420,19 +420,19 @@ function DashboardSkeleton() {
       <PageHeader title="Instagram" description="Archive and publishing for your connected account." />
       <InstagramNav />
 
-      <div className="mb-6 animate-pulse rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="mb-6 animate-pulse rounded-xl border border-gray-200 bg-white shadow-xs">
         <div className="flex items-center gap-4 border-b border-gray-100 px-6 py-5">
           <div className="h-12 w-12 shrink-0 rounded-full bg-gray-200" />
           <div className="flex-1 space-y-2">
-            <div className="h-4 w-40 rounded bg-gray-200" />
-            <div className="h-3 w-56 rounded bg-gray-100" />
+            <div className="h-4 w-40 rounded-sm bg-gray-200" />
+            <div className="h-3 w-56 rounded-sm bg-gray-100" />
           </div>
         </div>
         <div className="grid grid-cols-1 sm:grid-cols-3">
           {[0, 1, 2].map((i) => (
             <div key={i} className="space-y-2 px-6 py-4">
-              <div className="h-3 w-20 rounded bg-gray-100" />
-              <div className="h-4 w-28 rounded bg-gray-200" />
+              <div className="h-3 w-20 rounded-sm bg-gray-100" />
+              <div className="h-4 w-28 rounded-sm bg-gray-200" />
             </div>
           ))}
         </div>
@@ -440,9 +440,9 @@ function DashboardSkeleton() {
 
       <div className="grid grid-cols-2 gap-4 lg:grid-cols-4">
         {[0, 1, 2, 3].map((i) => (
-          <div key={i} className="animate-pulse rounded-xl border border-gray-200 bg-white p-5 shadow-sm">
-            <div className="h-3 w-20 rounded bg-gray-100" />
-            <div className="mt-3 h-8 w-12 rounded bg-gray-200" />
+          <div key={i} className="animate-pulse rounded-xl border border-gray-200 bg-white p-5 shadow-xs">
+            <div className="h-3 w-20 rounded-sm bg-gray-100" />
+            <div className="mt-3 h-8 w-12 rounded-sm bg-gray-200" />
           </div>
         ))}
       </div>

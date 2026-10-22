@@ -114,7 +114,7 @@ export function PostEditorShell({ contentTypeSlug, entryId, canPublish, initialD
           value={title}
           onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
           placeholder="Enter title..."
-          className="w-full text-3xl font-bold border-0 outline-none bg-transparent placeholder:text-gray-300"
+          className="w-full text-3xl font-bold border-0 outline-hidden bg-transparent placeholder:text-gray-300"
           autoFocus
         />
 

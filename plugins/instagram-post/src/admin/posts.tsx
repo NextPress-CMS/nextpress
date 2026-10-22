@@ -74,7 +74,7 @@ export default function InstagramPostsPage() {
       actions={
         <a
           href="/admin/plugins/instagram-post/import"
-          className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+          className="inline-flex items-center justify-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs transition-colors hover:bg-indigo-700"
         >
           <Download className="h-4 w-4" />
           Import posts
@@ -88,13 +88,13 @@ export default function InstagramPostsPage() {
       <>
         {header}
         <InstagramNav />
-        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
           {[0, 1, 2, 3, 4].map((i) => (
             <div key={i} className="flex animate-pulse items-center gap-4 border-b border-gray-100 px-6 py-4 last:border-0">
               <div className="h-11 w-11 shrink-0 rounded-md bg-gray-200" />
               <div className="flex-1 space-y-2">
-                <div className="h-3.5 w-1/3 rounded bg-gray-200" />
-                <div className="h-3 w-1/4 rounded bg-gray-100" />
+                <div className="h-3.5 w-1/3 rounded-sm bg-gray-200" />
+                <div className="h-3 w-1/4 rounded-sm bg-gray-100" />
               </div>
               <div className="h-5 w-16 rounded-full bg-gray-100" />
             </div>
@@ -109,14 +109,14 @@ export default function InstagramPostsPage() {
       <>
         {header}
         <InstagramNav />
-        <div className="rounded-xl border border-gray-200 bg-white px-6 py-16 text-center shadow-sm">
+        <div className="rounded-xl border border-gray-200 bg-white px-6 py-16 text-center shadow-xs">
           <h3 className="text-base font-semibold text-gray-900">No archived posts yet</h3>
           <p className="mx-auto mt-2 max-w-sm text-sm text-gray-500">
             Import your Instagram history to build a permanent archive on this website.
           </p>
           <a
             href="/admin/plugins/instagram-post/import"
-            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm transition-colors hover:bg-indigo-700"
+            className="mt-6 inline-flex items-center gap-2 rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs transition-colors hover:bg-indigo-700"
           >
             <Download className="h-4 w-4" />
             Import posts
@@ -131,7 +131,7 @@ export default function InstagramPostsPage() {
       {header}
       <InstagramNav />
 
-      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+      <div className="overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
         <div className="overflow-x-auto">
           <table className="w-full text-sm">
             <thead>

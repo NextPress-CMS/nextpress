@@ -35,7 +35,7 @@ import { mediaAssetToGalleryImage, thumbSrc } from "../lib/media";
 import { reorder } from "../lib/layouts";
 
 const SELECT_CLASS =
-  "np-input w-full rounded border border-gray-300 px-2 py-1 text-sm";
+  "np-input w-full rounded-sm border border-gray-300 px-2 py-1 text-sm";
 
 function SelectField<T extends string>(props: {
   label: string;
@@ -173,7 +173,7 @@ export default function PhotoGalleryEditor({
   };
 
   return (
-    <div className="np-pg-editor rounded border-2 border-dashed border-gray-300 p-4">
+    <div className="np-pg-editor rounded-sm border-2 border-dashed border-gray-300 p-4">
       <div className="mb-3 flex items-center gap-2">
         <span className="text-lg">🖼️</span>
         <span className="font-medium">Photo Gallery</span>
@@ -243,14 +243,14 @@ export default function PhotoGalleryEditor({
                   e.preventDefault();
                   handleDrop(index);
                 }}
-                className="flex flex-col gap-1 rounded border border-gray-200 bg-white p-1"
+                className="flex flex-col gap-1 rounded-sm border border-gray-200 bg-white p-1"
               >
                 <div className="group relative">
                   {/* eslint-disable-next-line @next/next/no-img-element */}
                   <img
                     src={thumbSrc(image)}
                     alt={image.alt}
-                    className="aspect-square w-full rounded object-cover"
+                    className="aspect-square w-full rounded-sm object-cover"
                   />
                   <button
                     type="button"
@@ -266,7 +266,7 @@ export default function PhotoGalleryEditor({
                       aria-label="Move left"
                       disabled={index === 0}
                       onClick={() => move(index, index - 1)}
-                      className="flex h-6 w-6 items-center justify-center rounded bg-black/60 text-white disabled:opacity-30"
+                      className="flex h-6 w-6 items-center justify-center rounded-sm bg-black/60 text-white disabled:opacity-30"
                     >
                       ‹
                     </button>
@@ -275,7 +275,7 @@ export default function PhotoGalleryEditor({
                       aria-label="Move right"
                       disabled={index === images.length - 1}
                       onClick={() => move(index, index + 1)}
-                      className="flex h-6 w-6 items-center justify-center rounded bg-black/60 text-white disabled:opacity-30"
+                      className="flex h-6 w-6 items-center justify-center rounded-sm bg-black/60 text-white disabled:opacity-30"
                     >
                       ›
                     </button>
@@ -288,14 +288,14 @@ export default function PhotoGalleryEditor({
                   onChange={(e) =>
                     updateImage(index, { caption: e.target.value })
                   }
-                  className="np-input w-full rounded border border-gray-200 px-1 py-0.5 text-xs"
+                  className="np-input w-full rounded-sm border border-gray-200 px-1 py-0.5 text-xs"
                 />
                 <input
                   type="text"
                   value={image.alt}
                   placeholder="Alt text"
                   onChange={(e) => updateImage(index, { alt: e.target.value })}
-                  className="np-input w-full rounded border border-gray-200 px-1 py-0.5 text-xs"
+                  className="np-input w-full rounded-sm border border-gray-200 px-1 py-0.5 text-xs"
                 />
               </div>
             ))}

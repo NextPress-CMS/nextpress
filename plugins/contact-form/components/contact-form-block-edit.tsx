@@ -4,7 +4,7 @@ import type { BlockEditProps } from "@nextpress/blocks";
 
 export default function ContactFormEdit({ attributes, setAttributes, isSelected }: BlockEditProps) {
   return (
-    <div className="np-contact-form-edit border-2 border-dashed border-gray-300 rounded p-4">
+    <div className="np-contact-form-edit border-2 border-dashed border-gray-300 rounded-sm p-4">
       <div className="flex items-center gap-2 mb-2">
         <span className="text-lg">📧</span>
         <span className="font-medium">Contact Form</span>

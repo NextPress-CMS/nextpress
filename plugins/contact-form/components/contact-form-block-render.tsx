@@ -37,7 +37,7 @@ export default function ContactFormBlock({ attributes }: BlockRenderProps<Contac
   }
 
   if (status === "sent") {
-    return <div className="np-contact-form-success p-4 bg-green-50 text-green-700 rounded">{message}</div>;
+    return <div className="np-contact-form-success p-4 bg-green-50 text-green-700 rounded-sm">{message}</div>;
   }
 
   return (

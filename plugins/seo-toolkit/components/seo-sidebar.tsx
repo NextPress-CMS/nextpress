@@ -46,7 +46,7 @@ export default function SeoSidebar({
       </div>
 
       {/* Search preview */}
-      <div className="border rounded p-3 bg-gray-50">
+      <div className="border rounded-sm p-3 bg-gray-50">
         <p className="text-xs text-gray-400 mb-1">Search preview</p>
         <p className="text-blue-700 text-sm font-medium truncate">
           {title || "Page Title"}

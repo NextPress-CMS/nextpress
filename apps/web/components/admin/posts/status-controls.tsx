@@ -43,7 +43,7 @@ export function StatusControls({
       )}
 
       {reviewNote && status === "DRAFT" && (
-        <div className="rounded bg-amber-50 border border-amber-200 p-2 text-xs text-amber-800">
+        <div className="rounded-sm bg-amber-50 border border-amber-200 p-2 text-xs text-amber-800">
           <strong>Changes requested:</strong> {reviewNote}
         </div>
       )}

@@ -158,7 +158,7 @@ export default function InstagramImport() {
       <InstagramNav />
 
       {/* ── Step 1: choose a size ── */}
-      <section className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+      <section className="mb-6 rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
         <h2 className="text-sm font-semibold text-gray-900">How many posts?</h2>
         <p className="mt-1 text-sm text-gray-500">
           Start with a preview. Nothing is written until you confirm.
@@ -176,7 +176,7 @@ export default function InstagramImport() {
                 onClick={() => setSize(option.value)}
                 className={`rounded-lg border px-4 py-2 text-sm font-medium transition-all ${
                   active
-                    ? "border-indigo-600 bg-indigo-50 text-indigo-700 shadow-sm"
+                    ? "border-indigo-600 bg-indigo-50 text-indigo-700 shadow-xs"
                     : "border-gray-300 bg-white text-gray-600 hover:border-gray-400 hover:bg-gray-50"
                 }`}
               >
@@ -210,7 +210,7 @@ export default function InstagramImport() {
 
       {/* ── Step 2: review the preview ── */}
       {preview && !progress && (
-        <section className="mb-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-sm">
+        <section className="mb-6 overflow-hidden rounded-xl border border-gray-200 bg-white shadow-xs">
           <div className="grid grid-cols-3 divide-x divide-gray-100 border-b border-gray-100">
             <Figure label="Discovered" value={preview.discovered} />
             <Figure label="Already archived" value={preview.alreadyArchived} muted />
@@ -279,7 +279,7 @@ export default function InstagramImport() {
 
       {/* ── Step 3: progress ── */}
       {progress && (
-        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-sm">
+        <section className="rounded-xl border border-gray-200 bg-white p-6 shadow-xs">
           <div className="flex items-center gap-3">
             {progress.done ? (
               <CheckCircle2 className="h-5 w-5 text-emerald-600" />

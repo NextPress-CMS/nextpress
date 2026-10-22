@@ -41,7 +41,7 @@ export function MediaDetailModal({ asset, onClose }: Props) {
         {/* Preview */}
         <div className="bg-gray-100 flex items-center justify-center p-4 min-h-[300px]">
           {asset.isImage ? (
-            <img src={asset.url} alt={asset.alt ?? ""} className="max-w-full max-h-[60vh] object-contain rounded" />
+            <img src={asset.url} alt={asset.alt ?? ""} className="max-w-full max-h-[60vh] object-contain rounded-sm" />
           ) : (
             <div className="text-center">
               <span className="text-5xl block mb-2">📄</span>
