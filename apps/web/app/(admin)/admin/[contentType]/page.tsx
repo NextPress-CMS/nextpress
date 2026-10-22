@@ -1,7 +1,7 @@
 import { requireAdmin } from "@/lib/auth/guards";
 import { checkPermissions } from "@/lib/permissions/check";
 import { getServerCaller } from "@/lib/trpc/server";
-import { PageHeader, Button } from "@nextpress/ui";
+import { PageHeader } from "@nextpress/ui";
 import { PostListTable } from "@/components/admin/posts/post-list-table";
 import { notFound } from "next/navigation";
 
@@ -34,16 +34,7 @@ export default async function DynamicContentListPage({
 
   return (
     <div>
-      <PageHeader
-        title={ct.namePlural}
-        actions={
-          perms.create_content ? (
-            <Button variant="primary" size="md">
-              <a href={`/admin/${slug}/new`}>New {ct.nameSingular}</a>
-            </Button>
-          ) : undefined
-        }
-      />
+      <PageHeader title={ct.namePlural} />
       <PostListTable
         entries={result.items}
         total={result.total}

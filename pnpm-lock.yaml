@@ -290,8 +290,6 @@ importers:
 
   plugins/_template: {}
 
-  plugins/analytics: {}
-
   plugins/contact-form: {}
 
   plugins/form-generator: {}
@@ -417,12 +415,6 @@ importers:
       '@types/react':
         specifier: ^19.3.0
         version: 19.3.0
-
-  tooling/eslint-config: {}
-
-  tooling/prettier-config: {}
-
-  tooling/typescript-config: {}
 
 packages:
 

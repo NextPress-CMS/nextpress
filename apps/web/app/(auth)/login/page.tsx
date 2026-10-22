@@ -2,7 +2,7 @@
 
 import { signIn } from "next-auth/react";
 import { useRouter, useSearchParams } from "next/navigation";
-import { useState } from "react";
+import { Suspense, useState } from "react";
 
 /**
  * Login page — client component for form interactivity.
@@ -13,7 +13,17 @@ import { useState } from "react";
  *   - Redirect back to original page via callbackUrl
  *   - Error display from query params
  */
+// useSearchParams() opts out of static prerendering unless it sits inside a
+// Suspense boundary, so the form is rendered as a suspended child.
 export default function LoginPage() {
+  return (
+    <Suspense fallback={null}>
+      <LoginForm />
+    </Suspense>
+  );
+}
+
+function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
   const callbackUrl = searchParams.get("callbackUrl") ?? "/admin";
@@ -131,12 +141,6 @@ export default function LoginPage() {
             Continue with GitHub
           </button>
         </div>
-
-        <p className="text-center text-sm text-gray-500">
-          <a href="/forgot-password" className="text-blue-600 hover:underline">
-            Forgot your password?
-          </a>
-        </p>
       </div>
     </div>
   );

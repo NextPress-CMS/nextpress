@@ -12,17 +12,16 @@ export default async function ContentTypesPage() {
       <PageHeader title="Content Types" actions={<Button>New Content Type</Button>} />
       <div className="bg-white rounded-lg border divide-y">
         {types.map((ct) => (
-          <a
+          <div
             key={ct.id}
-            href={`/admin/content-types/${ct.slug}`}
-            className="flex items-center justify-between px-4 py-3 hover:bg-gray-50"
+            className="flex items-center justify-between px-4 py-3"
           >
             <div>
               <div className="font-medium">{ct.namePlural}</div>
               <div className="text-xs text-gray-400">{ct.slug} · {ct.entryCount} entries · {ct.fieldCount} fields</div>
             </div>
             {ct.isSystem && <span className="text-xs bg-gray-100 text-gray-500 px-2 py-0.5 rounded">System</span>}
-          </a>
+          </div>
         ))}
       </div>
     </div>
