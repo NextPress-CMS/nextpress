@@ -1,0 +1,76 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/*
+ * Design tokens and the small set of `np-*` classes that UI primitives
+ * reference by name (Badge, Skeleton, inputs). Everything else in the admin
+ * is composed from Tailwind utilities directly.
+ */
+
+@layer base {
+  :root {
+    --np-radius: 0.5rem;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+
+  /* Visible, consistent keyboard focus across the admin. */
+  :focus-visible {
+    @apply outline-none ring-2 ring-indigo-500/50 ring-offset-1;
+  }
+}
+
+@layer components {
+  /* Badge — referenced as np-badge / np-badge-{variant} by @nextpress/ui. */
+  .np-badge {
+    @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+  }
+  .np-badge-default {
+    @apply bg-gray-100 text-gray-700;
+  }
+  .np-badge-success {
+    @apply bg-emerald-50 text-emerald-700;
+  }
+  .np-badge-warning {
+    @apply bg-amber-50 text-amber-700;
+  }
+  .np-badge-danger {
+    @apply bg-red-50 text-red-700;
+  }
+  .np-badge-info {
+    @apply bg-blue-50 text-blue-700;
+  }
+  .np-badge-outline {
+    @apply border border-gray-300 text-gray-600;
+  }
+
+  /* Shared form control styling used across admin forms. */
+  .np-input {
+    @apply rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900
+           shadow-sm transition-colors placeholder:text-gray-400
+           focus:border-indigo-500 focus:outline-none focus:ring-2 focus:ring-indigo-500/30
+           disabled:bg-gray-50 disabled:text-gray-400;
+  }
+}
+
+@layer utilities {
+  /* Respect users who prefer reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

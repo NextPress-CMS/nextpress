@@ -1,0 +1,8 @@
+{
+  "name": "@nextpress/plugin-form-generator",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "typecheck": "tsc --noEmit"
+  }
+}

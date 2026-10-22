@@ -1,0 +1,35 @@
+{
+  "name": "@nextpress/plugin-photo-gallery",
+  "version": "1.0.0",
+  "private": true,
+  "description": "A premium, responsive photo gallery block for NextPress with an immersive lightbox.",
+  "exports": {
+    ".": "./index.ts",
+    "./register-editor": "./register-editor.ts",
+    "./media-picker-bridge": "./lib/media-picker-bridge.ts",
+    "./media": "./lib/media.ts",
+    "./collections": "./lib/collections.ts",
+    "./styles/gallery.css": "./styles/gallery.css"
+  },
+  "scripts": {
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run"
+  },
+  "dependencies": {
+    "@nextpress/blocks": "workspace:*",
+    "@nextpress/core": "workspace:*",
+    "@nextpress/editor": "workspace:*",
+    "@nextpress/ui": "workspace:*",
+    "zod": "^3.25.76"
+  },
+  "peerDependencies": {
+    "react": "^18 || ^19",
+    "react-dom": "^18 || ^19"
+  },
+  "devDependencies": {
+    "@types/react": "^19.2.14",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.7",
+    "vitest": "^4.1.12"
+  }
+}

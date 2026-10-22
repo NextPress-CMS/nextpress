@@ -113,7 +113,8 @@ export const themeManager = {
 
     const discovered = this.getDiscovered().find((t) => t.slug === slug);
     if (!discovered) {
-      throw new Error(`Theme not found: ${slug}`);
+      console.warn(`Theme not found: ${slug}, falling back to "default"`);
+      return this.load("default");
     }
 
     const { manifest, dirPath } = discovered;

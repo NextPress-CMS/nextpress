@@ -2,14 +2,15 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { Settings, BookOpen, MessageSquare, Link2, Image } from "lucide-react";
+import { Settings, BookOpen, MessageSquare, Link2, Image, Images } from "lucide-react";
 
 const tabs = [
-  { href: "/admin/settings/general",    label: "General",    icon: Settings },
-  { href: "/admin/settings/reading",    label: "Reading",    icon: BookOpen },
-  { href: "/admin/settings/discussion", label: "Discussion", icon: MessageSquare },
-  { href: "/admin/settings/permalinks", label: "Permalinks", icon: Link2 },
-  { href: "/admin/settings/media",      label: "Media",      icon: Image },
+  { href: "/admin/settings/general",       label: "General",       icon: Settings },
+  { href: "/admin/settings/reading",       label: "Reading",       icon: BookOpen },
+  { href: "/admin/settings/discussion",    label: "Discussion",    icon: MessageSquare },
+  { href: "/admin/settings/permalinks",    label: "Permalinks",    icon: Link2 },
+  { href: "/admin/settings/media",         label: "Media",         icon: Image },
+  { href: "/admin/settings/photo-gallery", label: "Photo Gallery", icon: Images },
 ];
 
 export function SettingsNav() {

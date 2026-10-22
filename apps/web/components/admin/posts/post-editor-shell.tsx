@@ -3,6 +3,9 @@
 import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { NextPressEditor } from "@nextpress/editor";
+// Register plugin editor blocks (side-effect). The plugin API only carries the
+// server render side of a block; this bridges the client edit component in.
+import "@/lib/plugins/photo-gallery-editor";
 import { trpc } from "@/lib/trpc/client";
 import { useToast, Button } from "@nextpress/ui";
 import { useAutosave } from "@/hooks/use-autosave";

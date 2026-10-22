@@ -1,0 +1,327 @@
+/*
+ * Photo Gallery — scoped, theme-agnostic styles.
+ *
+ * Everything is namespaced under `.np-pg` (grid) and `.np-pg-lb` (lightbox)
+ * so nothing leaks globally. Colours/spacing come from CSS custom properties
+ * that inherit from the surrounding theme where possible, with sensible
+ * fallbacks. No hard-coded page background, text colour, or width assumptions.
+ */
+
+.np-pg {
+  --np-pg-gap: 0.75rem;
+  --np-pg-radius: 0.5rem;
+  --np-pg-cols: 3;
+  container-type: inline-size;
+  margin: 1.5rem 0;
+}
+
+.np-pg *,
+.np-pg-lb * {
+  box-sizing: border-box;
+}
+
+.np-pg__item {
+  position: relative;
+  margin: 0;
+  overflow: hidden;
+  border-radius: var(--np-pg-radius);
+  background: color-mix(in srgb, currentColor 6%, transparent);
+}
+
+.np-pg__trigger {
+  display: block;
+  width: 100%;
+  height: 100%;
+  padding: 0;
+  border: 0;
+  margin: 0;
+  background: none;
+  cursor: zoom-in;
+  color: inherit;
+  font: inherit;
+}
+
+.np-pg__trigger:focus-visible {
+  outline: 2px solid Highlight;
+  outline: 2px solid -webkit-focus-ring-color;
+  outline-offset: 2px;
+}
+
+.np-pg__img {
+  display: block;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition:
+    transform 250ms ease,
+    opacity 250ms ease;
+}
+
+/* ── Hover effects ── */
+.np-pg--hover-subtleZoom .np-pg__trigger:hover .np-pg__img,
+.np-pg--hover-subtleZoom .np-pg__trigger:focus-visible .np-pg__img {
+  transform: scale(1.04);
+}
+.np-pg--hover-fade .np-pg__trigger:hover .np-pg__img,
+.np-pg--hover-fade .np-pg__trigger:focus-visible .np-pg__img {
+  opacity: 0.82;
+}
+
+/* ── Captions ── */
+.np-pg__cap {
+  margin-top: 0.4rem;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+  opacity: 0.72;
+}
+.np-pg__cap--overlay {
+  position: absolute;
+  inset-inline: 0;
+  inset-block-end: 0;
+  margin: 0;
+  padding: 1.5rem 0.75rem 0.6rem;
+  color: #fff;
+  opacity: 0;
+  background: linear-gradient(to top, rgba(0, 0, 0, 0.66), transparent);
+  transition: opacity 200ms ease;
+}
+.np-pg--cap-overlay .np-pg__item:hover .np-pg__cap--overlay,
+.np-pg--cap-overlay .np-pg__trigger:focus-visible .np-pg__cap--overlay {
+  opacity: 1;
+}
+
+.np-pg__count {
+  margin: 0.75rem 0 0;
+  font-size: 0.75rem;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  opacity: 0.55;
+}
+
+/* ── Grid layout ── */
+.np-pg__grid {
+  display: grid;
+  gap: var(--np-pg-gap);
+  grid-template-columns: repeat(var(--np-pg-cols), 1fr);
+}
+/* auto-responsive when no fixed columns */
+.np-pg--grid .np-pg__grid:not([style]) {
+  grid-template-columns: repeat(auto-fill, minmax(min(220px, 100%), 1fr));
+}
+
+/* ── Mosaic layout ── */
+.np-pg__mosaic {
+  display: grid;
+  gap: var(--np-pg-gap);
+  grid-template-columns: repeat(6, 1fr);
+  grid-auto-rows: 1fr;
+  grid-auto-flow: dense;
+}
+.np-pg__mosaic .np-pg__item {
+  grid-column: span var(--np-pg-col-span, 2);
+  grid-row: span var(--np-pg-row-span, 1);
+  aspect-ratio: 1 / 1;
+}
+
+/* ── Masonry layout (CSS columns — clean, low layout-shift, no JS) ── */
+.np-pg__masonry {
+  column-count: 3;
+  column-gap: var(--np-pg-gap);
+}
+.np-pg__masonry .np-pg__item {
+  break-inside: avoid;
+  margin-bottom: var(--np-pg-gap);
+}
+.np-pg__masonry .np-pg__img {
+  height: auto;
+}
+
+/* ── Showcase layout ── */
+.np-pg__showcase {
+  display: flex;
+  flex-direction: column;
+  gap: var(--np-pg-gap);
+}
+.np-pg__showcase-main .np-pg__item {
+  aspect-ratio: 16 / 9;
+}
+.np-pg__showcase-strip {
+  display: grid;
+  grid-auto-flow: column;
+  grid-auto-columns: minmax(96px, 1fr);
+  gap: var(--np-pg-gap);
+  overflow-x: auto;
+  scroll-snap-type: x mandatory;
+  -webkit-overflow-scrolling: touch;
+}
+.np-pg__showcase-strip .np-pg__item {
+  aspect-ratio: 1 / 1;
+  scroll-snap-align: start;
+}
+
+.np-pg__single .np-pg__item {
+  border-radius: var(--np-pg-radius);
+}
+.np-pg__single .np-pg__img {
+  height: auto;
+}
+
+/* ── Responsive: simplify on narrow containers ── */
+@container (max-width: 700px) {
+  .np-pg__mosaic {
+    grid-template-columns: repeat(2, 1fr);
+  }
+  .np-pg__mosaic .np-pg__item {
+    grid-column: span 1 !important;
+    grid-row: span 1 !important;
+  }
+  .np-pg__masonry {
+    column-count: 2;
+  }
+  .np-pg__grid {
+    grid-template-columns: repeat(2, 1fr) !important;
+  }
+}
+@container (max-width: 400px) {
+  .np-pg__masonry {
+    column-count: 1;
+  }
+}
+
+/* ── Lightbox ── */
+.np-pg-lb {
+  position: fixed;
+  inset: 0;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: max(1rem, env(safe-area-inset-top))
+    max(1rem, env(safe-area-inset-right))
+    max(1rem, env(safe-area-inset-bottom))
+    max(1rem, env(safe-area-inset-left));
+  background: rgba(8, 8, 10, 0.92);
+  animation: np-pg-fade 200ms ease;
+}
+@keyframes np-pg-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+.np-pg-lb__stage {
+  margin: 0;
+  max-width: min(92vw, 1400px);
+  max-height: 86vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+}
+.np-pg-lb__img {
+  max-width: 100%;
+  max-height: 82vh;
+  width: auto;
+  height: auto;
+  object-fit: contain;
+  border-radius: 4px;
+  animation: np-pg-pop 220ms ease;
+}
+@keyframes np-pg-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+  }
+}
+.np-pg-lb__cap {
+  color: rgba(255, 255, 255, 0.85);
+  font-size: 0.875rem;
+  text-align: center;
+  max-width: 60ch;
+}
+
+.np-pg-lb__bar {
+  position: absolute;
+  top: 0;
+  inset-inline: 0;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 1rem;
+  padding: max(0.75rem, env(safe-area-inset-top)) 1rem 0.75rem;
+}
+.np-pg-lb__count {
+  margin-right: auto;
+  color: rgba(255, 255, 255, 0.7);
+  font-size: 0.8125rem;
+  font-variant-numeric: tabular-nums;
+}
+
+.np-pg-lb__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: rgba(255, 255, 255, 0.08);
+  color: #fff;
+  cursor: pointer;
+  border-radius: 999px;
+  transition:
+    background 160ms ease,
+    opacity 160ms ease;
+}
+.np-pg-lb__btn:hover {
+  background: rgba(255, 255, 255, 0.18);
+}
+.np-pg-lb__btn:focus-visible {
+  outline: 2px solid #fff;
+  outline-offset: 2px;
+}
+.np-pg-lb__close {
+  width: 2.5rem;
+  height: 2.5rem;
+  font-size: 1.5rem;
+  line-height: 1;
+}
+.np-pg-lb__nav {
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+  width: 2.75rem;
+  height: 2.75rem;
+  font-size: 1.75rem;
+  line-height: 1;
+  opacity: 0.6;
+}
+.np-pg-lb__nav:hover {
+  opacity: 1;
+}
+.np-pg-lb__prev {
+  left: max(0.5rem, env(safe-area-inset-left));
+}
+.np-pg-lb__next {
+  right: max(0.5rem, env(safe-area-inset-right));
+}
+
+/* ── Reduced motion ── */
+@media (prefers-reduced-motion: reduce) {
+  .np-pg__img,
+  .np-pg__cap--overlay,
+  .np-pg-lb__btn {
+    transition: none;
+  }
+  .np-pg-lb,
+  .np-pg-lb__img {
+    animation: none;
+  }
+  .np-pg--hover-subtleZoom .np-pg__trigger:hover .np-pg__img {
+    transform: none;
+  }
+}

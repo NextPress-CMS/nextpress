@@ -1,0 +1,45 @@
+{
+  "name": "Instagram Posts",
+  "slug": "instagram-post",
+  "version": "1.0.0",
+  "description": "Archive Instagram posts into NextPress and publish NextPress content to Instagram. Your website keeps the durable copy.",
+  "author": "NextPress",
+  "authorUrl": "https://github.com/NextPress-CMS/instagram-post",
+  "requires": "1.1.0",
+  "dependencies": [],
+  "permissions": [
+    {
+      "slug": "instagram_read",
+      "name": "View Instagram",
+      "description": "View the Instagram dashboard, archive and sync status",
+      "group": "instagram"
+    },
+    {
+      "slug": "instagram_import",
+      "name": "Import Instagram posts",
+      "description": "Run historical imports and manual synchronisation",
+      "group": "instagram"
+    },
+    {
+      "slug": "instagram_publish",
+      "name": "Publish to Instagram",
+      "description": "Publish NextPress content to the connected Instagram account",
+      "group": "instagram"
+    },
+    {
+      "slug": "instagram_manage_connection",
+      "name": "Manage Instagram connection",
+      "description": "Connect, reconnect and disconnect the Instagram account",
+      "group": "instagram"
+    },
+    {
+      "slug": "instagram_manage_settings",
+      "name": "Manage Instagram settings",
+      "description": "Change synchronisation, import and publishing settings",
+      "group": "instagram"
+    }
+  ],
+  "settings": {},
+  "contentTypes": ["instagram-post"],
+  "taxonomies": []
+}
