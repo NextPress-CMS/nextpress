@@ -30,6 +30,7 @@ const credentialsSchema = z.object({
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   adapter: PrismaAdapter(prisma),
+  secret: process.env.AUTH_SECRET,
 
   session: {
     strategy: SESSION_CONFIG.strategy,
@@ -141,7 +142,7 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
           name: token.name as string | null,
           displayName: (token.displayName as string | null) ?? null,
           image: token.picture as string | null,
-        } satisfies SessionUser as typeof session.user;
+        } satisfies SessionUser as unknown as typeof session.user;
       }
       return session;
     },

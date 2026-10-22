@@ -1,3 +1,4 @@
+import type { JSX } from "react";
 import DOMPurify from "isomorphic-dompurify";
 import type { BlockRenderProps } from "@nextpress/blocks";
 

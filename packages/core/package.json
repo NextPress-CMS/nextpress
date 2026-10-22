@@ -10,17 +10,18 @@
   "dependencies": {
     "@nextpress/blocks": "workspace:*",
     "@nextpress/db": "workspace:*",
-    "@prisma/client": "^6.0.0",
-    "isomorphic-dompurify": "^2.0.0",
-    "zod": "^3.23.0"
+    "@prisma/client": "^6.19.3",
+    "isomorphic-dompurify": "^2.36.0",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
-    "@aws-sdk/client-s3": "^3.0.0",
-    "@types/node": "^22.0.0",
+    "@aws-sdk/client-s3": "^3.1155.0",
+    "@types/node": "^24.19.2",
     "@types/react": "^18.3.0",
-    "@vitest/coverage-v8": "^3.0.0",
-    "sharp": "^0.33.0",
-    "typescript": "^5.5.0",
-    "vitest": "^3.0.0"
+    "@vitest/coverage-v8": "^4.1.12",
+    "sharp": "^0.35.5",
+    "typescript": "^5.9.3",
+    "vite": "^7.3.7",
+    "vitest": "^4.1.12"
   }
 }

@@ -10,15 +10,16 @@
   "dependencies": {
     "@nextpress/core": "workspace:*",
     "@nextpress/db": "workspace:*",
-    "@prisma/client": "^6.0.0",
-    "@trpc/server": "^11.0.0",
-    "superjson": "^2.0.0",
-    "zod": "^3.23.0"
+    "@prisma/client": "^6.19.3",
+    "@trpc/server": "^11.19.0",
+    "superjson": "^2.2.6",
+    "zod": "^3.25.76"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.0",
     "bcryptjs": "^2.4.3",
-    "typescript": "^5.5.0",
-    "vitest": "^3.0.0"
+    "typescript": "^5.9.3",
+    "vite": "^7.3.7",
+    "vitest": "^4.1.12"
   }
 }
