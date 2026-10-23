@@ -2,6 +2,10 @@ import { headers } from "next/headers";
 import { resolveSite } from "@/lib/site/resolve";
 import { themeManager } from "@nextpress/core/theme/theme-manager";
 import { prisma } from "@nextpress/db";
+import { registerDefaultThemes } from "@/lib/theme/register-themes";
+
+// Register pre-bundled themes at module-load time so webpack bundles them.
+registerDefaultThemes();
 
 /**
  * Public site layout — wraps all (site) routes in the active theme's layout.

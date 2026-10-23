@@ -67,7 +67,7 @@ export function CommentForm({
 
   if (status === "sent") {
     return (
-      <div className="rounded bg-green-50 border border-green-200 p-4 text-sm text-green-700">
+      <div className="rounded-sm bg-green-50 border border-green-200 p-4 text-sm text-green-700">
         Thank you! Your comment has been submitted
         {isAuthenticated ? "." : " and is awaiting moderation."}
       </div>

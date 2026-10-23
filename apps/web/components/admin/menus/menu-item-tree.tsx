@@ -54,7 +54,7 @@ export function MenuItemTree({ items, onUpdate, depth = 0 }: Props) {
     <div className="space-y-1" style={{ marginLeft: depth > 0 ? "1.5rem" : 0 }}>
       {items.map((item, index) => (
         <div key={item.id}>
-          <div className="flex items-center gap-2 rounded border bg-gray-50 px-3 py-2 text-sm group">
+          <div className="flex items-center gap-2 rounded-sm border bg-gray-50 px-3 py-2 text-sm group">
             {/* Drag handle */}
             <span className="text-gray-300 cursor-grab">⠿</span>
 

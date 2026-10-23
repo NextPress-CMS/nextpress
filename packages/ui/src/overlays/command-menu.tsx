@@ -50,7 +50,7 @@ export function CommandMenu({ items }: CommandMenuProps) {
           value={query}
           onChange={(e) => setQuery(e.target.value)}
           placeholder="Type a command..."
-          className="w-full px-4 py-3 border-b text-sm outline-none"
+          className="w-full px-4 py-3 border-b text-sm outline-hidden"
         />
         <div className="max-h-64 overflow-y-auto py-2">
           {filtered.map((item) => (
@@ -63,7 +63,7 @@ export function CommandMenu({ items }: CommandMenuProps) {
                 <div className="font-medium">{item.label}</div>
                 {item.description && <div className="text-gray-400 text-xs">{item.description}</div>}
               </div>
-              {item.shortcut && <kbd className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded">{item.shortcut}</kbd>}
+              {item.shortcut && <kbd className="text-xs text-gray-400 bg-gray-100 px-1.5 py-0.5 rounded-sm">{item.shortcut}</kbd>}
             </button>
           ))}
           {filtered.length === 0 && (

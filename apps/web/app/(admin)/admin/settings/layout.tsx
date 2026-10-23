@@ -13,10 +13,6 @@ export default async function SettingsLayout({
 
   const tabs = [
     { href: "/admin/settings/general", label: "General" },
-    { href: "/admin/settings/reading", label: "Reading" },
-    { href: "/admin/settings/discussion", label: "Discussion" },
-    { href: "/admin/settings/permalinks", label: "Permalinks" },
-    { href: "/admin/settings/media", label: "Media" },
   ];
 
   return (

@@ -1,0 +1,140 @@
+@import 'tailwindcss';
+
+@plugin '@tailwindcss/typography';
+
+/*
+ * Tailwind v4 auto-detects sources under apps/web only. Workspace packages,
+ * plugins and themes live outside it, so list them explicitly. Plugin globs are
+ * scoped to source folders so each plugin's node_modules is never scanned.
+ */
+@source '../../../packages/blocks/src/**/*.{js,ts,jsx,tsx}';
+@source '../../../packages/ui/src/**/*.{js,ts,jsx,tsx}';
+@source '../../../plugins/*/*.{js,ts,jsx,tsx}';
+@source '../../../plugins/*/src/**/*.{js,ts,jsx,tsx}';
+@source '../../../plugins/*/components/**/*.{js,ts,jsx,tsx}';
+@source '../../../plugins/*/lib/**/*.{js,ts,jsx,tsx}';
+@source '../../../themes/*/{layout,templates,blocks,components}/**/*.{js,ts,jsx,tsx}';
+@source '../../../themes/*/layout.tsx';
+
+@theme {
+  --color-primary: #080b18;
+  --color-primary-light: #0f172a;
+  --color-accent: #6366f1;
+  --color-accent-light: #818cf8;
+  --color-accent-bright: #a5b4fc;
+  --color-cyan: #22d3ee;
+  --color-cyan-light: #67e8f9;
+  --color-surface: #0f172a;
+  --color-surface-light: #1e293b;
+  --color-gold: #f59e0b;
+
+  --animate-gradient-shift: gradientShift 8s ease infinite;
+  --animate-border-rotate: borderRotate 6s linear infinite;
+  --animate-pulse-block: pulseBlock 2.5s ease-in-out infinite;
+  --animate-chain-flow: chainFlow 1.5s linear infinite;
+  --animate-float-slow: floatSlow 6s ease-in-out infinite;
+  --animate-shimmer-slide: shimmerSlide 2.5s ease-in-out infinite;
+
+  --font-sans: Inter, system-ui, -apple-system, sans-serif;
+}
+
+/*
+  The default border color has changed to `currentcolor` in Tailwind CSS v4,
+  so we've added these compatibility styles to make sure everything still
+  looks the same as it did with Tailwind CSS v3.
+
+  If we ever want to remove these styles, we need to add an explicit border
+  color utility to any element that depends on these defaults.
+*/
+@layer base {
+  *,
+  ::after,
+  ::before,
+  ::backdrop,
+  ::file-selector-button {
+    border-color: var(--color-gray-200, currentcolor);
+  }
+
+  /* v4 preflight resets buttons to the default cursor; keep the v3 pointer. */
+  button:not(:disabled),
+  [role="button"]:not(:disabled) {
+    cursor: pointer;
+  }
+}
+
+/*
+ * Design tokens and the small set of `np-*` classes that UI primitives
+ * reference by name (Badge, Skeleton, inputs). Everything else in the admin
+ * is composed from Tailwind utilities directly.
+ */
+
+/* Badge: referenced as np-badge / np-badge-{variant} by @nextpress/ui. */
+@utility np-badge {
+  @apply inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium;
+}
+
+@utility np-badge-default {
+  @apply bg-gray-100 text-gray-700;
+}
+
+@utility np-badge-success {
+  @apply bg-emerald-50 text-emerald-700;
+}
+
+@utility np-badge-warning {
+  @apply bg-amber-50 text-amber-700;
+}
+
+@utility np-badge-danger {
+  @apply bg-red-50 text-red-700;
+}
+
+@utility np-badge-info {
+  @apply bg-blue-50 text-blue-700;
+}
+
+@utility np-badge-outline {
+  @apply border border-gray-300 text-gray-600;
+}
+
+/* Shared form control styling used across admin forms. */
+@utility np-input {
+  @apply rounded-lg border border-gray-300 bg-white px-3 py-2 text-sm text-gray-900
+           shadow-xs transition-colors placeholder:text-gray-400
+           focus:border-indigo-500 focus:outline-hidden focus:ring-2 focus:ring-indigo-500/30
+           disabled:bg-gray-50 disabled:text-gray-400;
+}
+
+@layer base {
+  :root {
+    --np-radius: 0.5rem;
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+  }
+
+  body {
+    @apply bg-white text-gray-900 antialiased;
+  }
+
+  /* Visible, consistent keyboard focus across the admin. */
+  :focus-visible {
+    @apply outline-hidden ring-2 ring-indigo-500/50 ring-offset-1;
+  }
+}
+
+@layer utilities {
+  /* Respect users who prefer reduced motion. */
+  @media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+      animation-duration: 0.01ms !important;
+      animation-iteration-count: 1 !important;
+      transition-duration: 0.01ms !important;
+      scroll-behavior: auto !important;
+    }
+  }
+}

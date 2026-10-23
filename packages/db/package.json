@@ -7,13 +7,13 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
-    "@prisma/client": "^6.0.0"
+    "@prisma/client": "^6.19.3"
   },
   "devDependencies": {
     "@types/bcryptjs": "^2.4.0",
-    "@types/node": "^22.0.0",
+    "@types/node": "^24.19.2",
     "bcryptjs": "^2.4.3",
-    "prisma": "^6.0.0",
-    "typescript": "^5.5.0"
+    "prisma": "^6.19.3",
+    "typescript": "^5.9.3"
   }
 }

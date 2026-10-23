@@ -128,11 +128,13 @@ export async function POST(req: Request) {
       }
       if (!relativePath) continue;
 
-      const fullPath = path.join(targetDir, relativePath);
+      const fullPath = path.resolve(targetDir, relativePath);
       const dir = path.dirname(fullPath);
 
-      // Security: ensure path doesn't escape target directory
-      if (!fullPath.startsWith(targetDir)) continue;
+      // Security: ensure path doesn't escape target directory. Compare with a
+      // trailing separator so a sibling such as "plugins/foo-evil" cannot pass
+      // a prefix check against "plugins/foo".
+      if (!fullPath.startsWith(path.resolve(targetDir) + path.sep)) continue;
 
       await fs.mkdir(dir, { recursive: true });
       await fs.writeFile(fullPath, entry.getData());

@@ -3,6 +3,9 @@
 import { useState, useCallback, useRef } from "react";
 import { useRouter } from "next/navigation";
 import { NextPressEditor } from "@nextpress/editor";
+// Register plugin editor blocks (side-effect). The plugin API only carries the
+// server render side of a block; this bridges the client edit component in.
+import "@/lib/plugins/photo-gallery-editor";
 import { trpc } from "@/lib/trpc/client";
 import { useToast, Button } from "@nextpress/ui";
 import { useAutosave } from "@/hooks/use-autosave";
@@ -11,6 +14,8 @@ import type { BlockData } from "@nextpress/blocks";
 
 interface Props {
   contentTypeSlug: string;
+  /** Admin list URL for this content type, e.g. /admin/posts or /admin/recipe. */
+  basePath?: string;
   entryId?: string;
   canPublish: boolean;
   initialData?: {
@@ -22,7 +27,7 @@ interface Props {
   };
 }
 
-export function PostEditorShell({ contentTypeSlug, entryId, canPublish, initialData }: Props) {
+export function PostEditorShell({ contentTypeSlug, basePath = "/admin/posts", entryId, canPublish, initialData }: Props) {
   const router = useRouter();
   const { toast } = useToast();
 
@@ -68,14 +73,14 @@ export function PostEditorShell({ contentTypeSlug, entryId, canPublish, initialD
           status: "DRAFT",
         });
         toast("success", "Draft created");
-        router.push(`/admin/posts/${result.id}/edit`);
+        router.push(`${basePath}/${result.id}/edit`);
       }
       setIsDirty(false);
       setLastSavedAt(new Date());
     } catch (e: any) {
       toast("error", e.message ?? "Save failed");
     }
-  }, [entryId, title, blocks, contentTypeSlug, updateMutation, createMutation, toast, router]);
+  }, [entryId, title, blocks, contentTypeSlug, basePath, updateMutation, createMutation, toast, router]);
 
   /**
    * AUTOSAVE — lightweight, does NOT create a revision.
@@ -111,7 +116,7 @@ export function PostEditorShell({ contentTypeSlug, entryId, canPublish, initialD
           value={title}
           onChange={(e) => { setTitle(e.target.value); setIsDirty(true); }}
           placeholder="Enter title..."
-          className="w-full text-3xl font-bold border-0 outline-none bg-transparent placeholder:text-gray-300"
+          className="w-full text-3xl font-bold border-0 outline-hidden bg-transparent placeholder:text-gray-300"
           autoFocus
         />
 
@@ -175,7 +180,7 @@ export function PostEditorShell({ contentTypeSlug, entryId, canPublish, initialD
           } : undefined}
           onTrash={entryId ? async () => {
             await trashMutation.mutateAsync({ id: entryId });
-            router.push("/admin/posts");
+            router.push(basePath);
           } : undefined}
           reviewNote={
             reviewQuery.data?.status === "changes_requested"

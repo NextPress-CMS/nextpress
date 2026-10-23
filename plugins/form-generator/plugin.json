@@ -1,0 +1,44 @@
+{
+  "name": "Form Generator",
+  "slug": "form-generator",
+  "version": "1.0.0",
+  "description": "A free, customizable drag-and-configure form builder for NextPress — a Contact Form 7 alternative with spam, flood, and DDoS protection plus optional Google reCAPTCHA.",
+  "author": "NextPress Team",
+  "authorUrl": "https://github.com/NextPress-CMS",
+  "dependencies": [],
+  "permissions": [
+    {
+      "slug": "manage_form_submissions",
+      "name": "Manage Form Submissions",
+      "description": "View, read, and delete form submissions",
+      "group": "plugin"
+    }
+  ],
+  "settings": {
+    "type": "object",
+    "properties": {
+      "recipientEmail": {
+        "type": "string",
+        "default": "",
+        "title": "Notification Email"
+      },
+      "successMessage": {
+        "type": "string",
+        "default": "Thank you! Your submission has been received."
+      },
+      "enableNotifications": { "type": "boolean", "default": true },
+      "storeSubmissions": { "type": "boolean", "default": true },
+      "recaptchaEnabled": { "type": "boolean", "default": false },
+      "recaptchaVersion": { "type": "string", "default": "v2" },
+      "recaptchaSiteKey": { "type": "string", "default": "" },
+      "recaptchaSecretKey": { "type": "string", "default": "" },
+      "recaptchaMinScore": { "type": "number", "default": 0.5 },
+      "rateLimitMax": { "type": "number", "default": 5 },
+      "rateLimitWindowSeconds": { "type": "number", "default": 60 },
+      "honeypotField": { "type": "string", "default": "np_hp_email" },
+      "minSubmitSeconds": { "type": "number", "default": 3 }
+    }
+  },
+  "contentTypes": ["form_submission"],
+  "taxonomies": []
+}

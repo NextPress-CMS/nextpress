@@ -1,0 +1,13 @@
+{
+  "name": "Photo Gallery",
+  "slug": "photo-gallery",
+  "version": "1.0.0",
+  "description": "A premium, responsive photo gallery block with adaptive mosaic, masonry, grid, and showcase layouts plus an immersive, accessible lightbox.",
+  "author": "NextPress",
+  "authorUrl": "https://github.com/NextPress-CMS/photo-gallery",
+  "dependencies": [],
+  "permissions": [],
+  "settings": {},
+  "contentTypes": [],
+  "taxonomies": []
+}

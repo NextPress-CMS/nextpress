@@ -2,6 +2,7 @@
 import { useEffect, useRef, useCallback } from "react";
 
 export function useAutosave(isDirty: boolean, onSave: () => Promise<void>, delay = 5000) {
+  // React 19 types require an explicit initial value for useRef.
   const timerRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const savingRef = useRef(false);
 

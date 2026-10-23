@@ -10,6 +10,8 @@
  */
 
 import { NextResponse } from "next/server";
+import { TRPCError } from "@trpc/server";
+import { getHTTPStatusCodeFromError } from "@trpc/server/http";
 import { getAuthContext } from "../auth/session";
 import type { AuthContext } from "@nextpress/core/auth/auth-types";
 import type { CmsError } from "@nextpress/core/errors/cms-error";
@@ -70,6 +72,17 @@ export function handleCmsError(e: unknown): NextResponse {
   if (e && typeof e === "object" && "statusCode" in e) {
     const err = e as CmsError;
     return errorResponse(err.code, err.message, err.statusCode, err.details);
+  }
+  // REST routes that delegate to tRPC procedures surface TRPCErrors; map them
+  // to their HTTP status instead of a blanket 500.
+  if (e instanceof TRPCError) {
+    // Unwrap CmsErrors thrown by services inside a procedure.
+    if (e.cause && typeof e.cause === "object" && "statusCode" in e.cause) {
+      return handleCmsError(e.cause);
+    }
+    // Zod input failures arrive as BAD_REQUEST with the ZodError as cause.
+    const details = e.cause && "issues" in e.cause ? { issues: (e.cause as { issues: unknown }).issues } : undefined;
+    return errorResponse(e.code, e.message, getHTTPStatusCodeFromError(e), details);
   }
   const message = e instanceof Error ? e.message : "Internal server error";
   return errorResponse("INTERNAL_ERROR", message, 500);

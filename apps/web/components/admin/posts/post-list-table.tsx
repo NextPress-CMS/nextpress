@@ -113,7 +113,7 @@ export function PostListTable({
             <a
               key={p}
               href={`${baseUrl}?page=${p}${currentStatus ? `&status=${currentStatus}` : ""}${currentSearch ? `&search=${currentSearch}` : ""}`}
-              className={`px-3 py-1 rounded text-sm ${p === page ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
+              className={`px-3 py-1 rounded-sm text-sm ${p === page ? "bg-blue-600 text-white" : "bg-gray-100 text-gray-700 hover:bg-gray-200"}`}
             >
               {p}
             </a>

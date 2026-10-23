@@ -7,7 +7,7 @@ interface SkeletonProps {
 export function Skeleton({ className = "", width, height }: SkeletonProps) {
   return (
     <div
-      className={`np-skeleton animate-pulse bg-gray-200 rounded ${className}`}
+      className={`np-skeleton animate-pulse bg-gray-200 rounded-sm ${className}`}
       style={{ width, height }}
     />
   );

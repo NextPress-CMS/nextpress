@@ -87,7 +87,7 @@ export function MediaGrid({ initialData, selectionMode, onSelect }: Props) {
                   </span>
                 </div>
               )}
-              <div className="absolute bottom-0 inset-x-0 bg-gradient-to-t from-black/60 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
+              <div className="absolute bottom-0 inset-x-0 bg-linear-to-t from-black/60 to-transparent p-2 opacity-0 group-hover:opacity-100 transition-opacity">
                 <p className="text-xs text-white truncate">{asset.filename}</p>
               </div>
             </button>

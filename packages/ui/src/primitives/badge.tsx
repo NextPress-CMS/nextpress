@@ -6,8 +6,19 @@ interface BadgeProps {
   className?: string;
 }
 
+// Full class names must appear literally so Tailwind's scanner generates them;
+// an interpolated `np-badge-${variant}` is invisible to it.
+const variantClasses: Record<Variant, string> = {
+  default: "np-badge-default",
+  success: "np-badge-success",
+  warning: "np-badge-warning",
+  danger: "np-badge-danger",
+  info: "np-badge-info",
+  outline: "np-badge-outline",
+};
+
 export function Badge({ variant = "default", children, className = "" }: BadgeProps) {
-  return <span className={`np-badge np-badge-${variant} ${className}`}>{children}</span>;
+  return <span className={`np-badge ${variantClasses[variant]} ${className}`}>{children}</span>;
 }
 
 /** Map ContentStatus to Badge variant */

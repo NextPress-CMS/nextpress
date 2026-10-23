@@ -70,7 +70,7 @@ export function CommentList({ initialData, currentStatus, counts }: Props) {
 
       {/* Bulk actions */}
       {selected.size > 0 && (
-        <div className="flex items-center gap-2 mb-3 p-2 bg-blue-50 rounded text-sm">
+        <div className="flex items-center gap-2 mb-3 p-2 bg-blue-50 rounded-sm text-sm">
           <span>{selected.size} selected</span>
           <Button size="sm" variant="outline" onClick={() => bulkMutation.mutate({ ids: Array.from(selected), status: "APPROVED" })}>
             Approve
@@ -144,7 +144,7 @@ export function CommentList({ initialData, currentStatus, counts }: Props) {
         <div className="flex justify-center gap-2 mt-4">
           {Array.from({ length: initialData.totalPages }, (_, i) => i + 1).map((p) => (
             <a key={p} href={`/admin/comments?page=${p}${currentStatus ? `&status=${currentStatus}` : ""}`}
-              className={`px-3 py-1 rounded text-sm ${p === initialData.page ? "bg-blue-600 text-white" : "bg-gray-100 hover:bg-gray-200"}`}>
+              className={`px-3 py-1 rounded-sm text-sm ${p === initialData.page ? "bg-blue-600 text-white" : "bg-gray-100 hover:bg-gray-200"}`}>
               {p}
             </a>
           ))}

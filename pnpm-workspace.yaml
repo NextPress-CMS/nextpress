@@ -3,4 +3,3 @@ packages:
   - "packages/*"
   - "plugins/*"
   - "themes/*"
-  - "tooling/*"
