@@ -30,7 +30,9 @@ export const createContentTypeSchema = z.object({
   settings: z.record(z.unknown()).default({}),
 });
 
-export type CreateContentTypeInput = z.infer<typeof createContentTypeSchema>;
+// z.input, not z.infer: the service parses this itself, so callers may omit
+// fields the schema defaults (hasArchive, supports, menuPosition, ...).
+export type CreateContentTypeInput = z.input<typeof createContentTypeSchema>;
 
 export const updateContentTypeSchema = createContentTypeSchema
   .partial()

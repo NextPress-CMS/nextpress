@@ -69,7 +69,9 @@ export const createFieldDefinitionSchema = z.object({
   sortOrder: z.number().int().min(0).default(0),
 });
 
-export type CreateFieldDefinitionInput = z.infer<
+// z.input, not z.infer: the service parses this itself, so callers may omit
+// fields the schema defaults (group, isRequired, sortOrder).
+export type CreateFieldDefinitionInput = z.input<
   typeof createFieldDefinitionSchema
 >;
 

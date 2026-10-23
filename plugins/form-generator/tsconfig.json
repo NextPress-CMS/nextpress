@@ -2,7 +2,14 @@
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
     "noEmit": true,
-    "types": ["node"]
+    "jsx": "react-jsx",
+    "types": ["node", "react"],
+    "baseUrl": ".",
+    "paths": {
+      "@nextpress/core/*": ["../../packages/core/src/*"],
+      "@nextpress/blocks": ["../../packages/blocks/src"],
+      "@nextpress/blocks/*": ["../../packages/blocks/src/*"]
+    }
   },
   "include": ["**/*.ts", "**/*.tsx"],
   "exclude": ["node_modules", "dist", "install"]

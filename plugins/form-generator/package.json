@@ -4,5 +4,20 @@
   "private": true,
   "scripts": {
     "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@nextpress/blocks": "workspace:*",
+    "@nextpress/core": "workspace:*",
+    "zod": "^3.25.76"
+  },
+  "devDependencies": {
+    "@types/node": "^24.19.2",
+    "@types/react": "^19.3.0",
+    "next": "^15.5.28",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "next": "^15",
+    "react": "^18 || ^19"
   }
 }
