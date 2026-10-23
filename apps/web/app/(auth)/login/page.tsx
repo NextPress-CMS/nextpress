@@ -23,10 +23,20 @@ export default function LoginPage() {
   );
 }
 
+/**
+ * Only same-origin paths may be used as a post-login redirect. Anything else
+ * (absolute URLs, protocol-relative "//host", backslash tricks "/\host")
+ * would turn the login page into an open redirect.
+ */
+function safeCallbackUrl(raw: string | null): string {
+  if (!raw || !raw.startsWith("/") || raw.startsWith("//") || raw.startsWith("/\\")) return "/admin";
+  return raw;
+}
+
 function LoginForm() {
   const router = useRouter();
   const searchParams = useSearchParams();
-  const callbackUrl = searchParams.get("callbackUrl") ?? "/admin";
+  const callbackUrl = safeCallbackUrl(searchParams.get("callbackUrl"));
   const errorParam = searchParams.get("error");
 
   const [email, setEmail] = useState("");

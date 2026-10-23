@@ -4,8 +4,9 @@
   "private": true,
   "main": "src/index.ts",
   "scripts": {
-    "test": "vitest run",
-    "typecheck": "tsc --noEmit"
+    "test": "vitest run src/__tests__/unit",
+    "typecheck": "tsc --noEmit",
+    "test:integration": "vitest run src/__tests__/integration"
   },
   "dependencies": {
     "@nextpress/blocks": "workspace:*",

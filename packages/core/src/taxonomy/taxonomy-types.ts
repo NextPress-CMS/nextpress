@@ -1,8 +1,8 @@
 import { z } from "zod";
-import { slugSchema, paginationSchema } from "../validation/schemas";
+import { slugSchema, routeSlugSchema, paginationSchema } from "../validation/schemas";
 
 export const createTaxonomySchema = z.object({
-  slug: slugSchema,
+  slug: routeSlugSchema,
   name: z.string().min(1).max(200),
   description: z.string().max(500).optional(),
   hierarchical: z.boolean().default(false),

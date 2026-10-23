@@ -19,6 +19,31 @@ export const slugSchema = z
 
 export const optionalSlugSchema = slugSchema.optional();
 
+/**
+ * Slugs owned by fixed app routes. Content types are served by the
+ * /admin/[contentType] catch-all and taxonomies by the public [...slug]
+ * catch-all, so a type or taxonomy with one of these slugs would be shadowed
+ * by the static route and become unreachable.
+ *
+ * Keep in sync with the static segments under apps/web/app.
+ */
+export const RESERVED_ROUTE_SLUGS: ReadonlySet<string> = new Set([
+  // /admin/<segment>
+  "appearance", "comments", "content-types", "fields", "media", "menus",
+  "plugins", "posts", "profile", "settings", "taxonomies", "users",
+  // Public site and auth routes
+  "admin", "api", "login", "logout", "register", "forgot-password",
+  "reset-password", "search", "preview", "feed", "sitemap",
+  // Next.js and common static asset paths
+  "static", "public", "assets", "skins",
+]);
+
+/** A slug that will be used as a top-level URL segment. */
+export const routeSlugSchema = slugSchema.refine(
+  (s) => !RESERVED_ROUTE_SLUGS.has(s),
+  (s) => ({ message: `"${s}" is reserved by a built-in route. Choose another slug.` }),
+);
+
 // ── Pagination ──
 
 export const paginationSchema = z.object({

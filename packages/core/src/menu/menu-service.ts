@@ -101,59 +101,64 @@ export const menuService = {
     assertCan(auth, "manage_menus");
     const data = saveMenuSchema.parse(input);
 
-    // Upsert the menu
-    const menu = await prisma.menu.upsert({
-      where: {
-        siteId_location: { siteId: auth.siteId, location: data.location },
-      },
-      update: { name: data.name },
-      create: {
-        siteId: auth.siteId,
-        name: data.name,
-        location: data.location,
-      },
-    });
-
-    // Delete all existing items
-    await prisma.menuItem.deleteMany({ where: { menuId: menu.id } });
-
-    // Create new items (handle temp IDs for parent references)
-    const idMap = new Map<string, string>(); // tempId → realId
-
-    // First pass: create all items without parentId
-    for (const item of data.items) {
-      const created = await prisma.menuItem.create({
-        data: {
-          menuId: menu.id,
-          label: item.label,
-          url: item.type === "custom" ? item.url : null,
-          type: item.type,
-          objectId: item.objectId ?? null,
-          sortOrder: item.sortOrder,
-          cssClass: item.cssClass ?? null,
-          openInNewTab: item.openInNewTab,
-          // parentId set in second pass
+    // One transaction: the delete-then-recreate must never leave a menu
+    // empty or half-built if a later write fails.
+    await prisma.$transaction(async (tx) => {
+      // Upsert the menu
+      const menu = await tx.menu.upsert({
+        where: {
+          siteId_location: { siteId: auth.siteId, location: data.location },
+        },
+        update: { name: data.name },
+        create: {
+          siteId: auth.siteId,
+          name: data.name,
+          location: data.location,
         },
       });
-
-      if (item.id) {
-        idMap.set(item.id, created.id);
-      }
-    }
-
-    // Second pass: set parent IDs
-    for (const item of data.items) {
-      if (item.parentId && item.id) {
-        const realId = idMap.get(item.id);
-        const realParentId = idMap.get(item.parentId);
-        if (realId && realParentId) {
-          await prisma.menuItem.update({
-            where: { id: realId },
-            data: { parentId: realParentId },
-          });
+  
+      // Delete all existing items
+      await tx.menuItem.deleteMany({ where: { menuId: menu.id } });
+  
+      // Create new items (handle temp IDs for parent references)
+      const idMap = new Map<string, string>(); // tempId → realId
+  
+      // First pass: create all items without parentId
+      for (const item of data.items) {
+        const created = await tx.menuItem.create({
+          data: {
+            menuId: menu.id,
+            label: item.label,
+            url: item.type === "custom" ? item.url : null,
+            type: item.type,
+            objectId: item.objectId ?? null,
+            sortOrder: item.sortOrder,
+            cssClass: item.cssClass ?? null,
+            openInNewTab: item.openInNewTab,
+            // parentId set in second pass
+          },
+        });
+  
+        if (item.id) {
+          idMap.set(item.id, created.id);
         }
       }
-    }
+  
+      // Second pass: set parent IDs
+      for (const item of data.items) {
+        if (item.parentId && item.id) {
+          const realId = idMap.get(item.id);
+          const realParentId = idMap.get(item.parentId);
+          if (realId && realParentId) {
+            await tx.menuItem.update({
+              where: { id: realId },
+              data: { parentId: realParentId },
+            });
+          }
+        }
+      }
+  
+      });
 
     return (await this.getByLocation(auth.siteId, data.location))!;
   },

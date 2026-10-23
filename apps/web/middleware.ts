@@ -18,7 +18,12 @@
 // This middleware handles headers and additional routing logic.
 // ============================================================================
 
-export { auth as middleware } from "./lib/auth/config";
+import NextAuth from "next-auth";
+import { authConfig } from "./lib/auth/auth.config";
+
+// Built from the edge-safe config only: importing ./lib/auth/config here would
+// pull Prisma and bcrypt into the Edge bundle.
+export const { auth: middleware } = NextAuth(authConfig);
 
 export const config = {
   matcher: [

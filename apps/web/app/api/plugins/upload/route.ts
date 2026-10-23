@@ -16,8 +16,21 @@ import path from "path";
 import fs from "fs/promises";
 import { existsSync } from "fs";
 
-// Plugins live at the monorepo root
-const PLUGINS_DIR = path.resolve(process.cwd(), "../../plugins");
+// Plugins live at the monorepo root unless NEXTPRESS_PLUGINS_DIR overrides it
+// (needed for standalone builds, where cwd is not apps/web).
+const PLUGINS_DIR = process.env.NEXTPRESS_PLUGINS_DIR
+  ? path.resolve(process.env.NEXTPRESS_PLUGINS_DIR)
+  : path.resolve(process.cwd(), "../../plugins");
+
+/**
+ * A plugin is server-side code, so uploading one is code execution on the
+ * server. Off in production unless the operator opts in explicitly.
+ */
+function uploadsEnabled(): boolean {
+  if (process.env.ALLOW_PLUGIN_UPLOAD === "true") return true;
+  if (process.env.ALLOW_PLUGIN_UPLOAD === "false") return false;
+  return process.env.NODE_ENV !== "production";
+}
 
 const MAX_PLUGIN_SIZE = 50 * 1024 * 1024; // 50MB
 
@@ -25,6 +38,12 @@ export async function POST(req: Request) {
   try {
     const auth = await requireAuthContext();
     assertCan(auth, "manage_plugins");
+    if (!uploadsEnabled()) {
+      return NextResponse.json(
+        { error: "Plugin uploads are disabled. Set ALLOW_PLUGIN_UPLOAD=true to enable." },
+        { status: 403 },
+      );
+    }
 
     const formData = await req.formData();
     const file = formData.get("file") as File | null;
@@ -109,35 +128,45 @@ export async function POST(req: Request) {
       );
     }
 
-    // Check if plugin already exists
+    // Extract into a hidden staging dir next to the target (same filesystem,
+    // so the final rename is atomic), then swap. A failed or partial upload
+    // never touches the installed plugin.
     const targetDir = path.join(PLUGINS_DIR, manifest.slug);
-    if (existsSync(targetDir)) {
-      // Remove existing to allow updates/reinstalls
-      await fs.rm(targetDir, { recursive: true, force: true });
-    }
+    const stagingDir = path.join(PLUGINS_DIR, `.staging-${manifest.slug}-${Date.now()}`);
+    const backupDir = path.join(PLUGINS_DIR, `.old-${manifest.slug}-${Date.now()}`);
+    await fs.mkdir(stagingDir, { recursive: true });
+    const stagingRoot = path.resolve(stagingDir) + path.sep;
 
-    // Extract files to plugins/<slug>/
-    await fs.mkdir(targetDir, { recursive: true });
+    try {
+      for (const entry of entries) {
+        if (entry.isDirectory) continue;
 
-    for (const entry of entries) {
-      if (entry.isDirectory) continue;
+        let relativePath = entry.entryName;
+        if (stripPrefix && relativePath.startsWith(stripPrefix)) {
+          relativePath = relativePath.slice(stripPrefix.length);
+        }
+        if (!relativePath) continue;
 
-      let relativePath = entry.entryName;
-      if (stripPrefix && relativePath.startsWith(stripPrefix)) {
-        relativePath = relativePath.slice(stripPrefix.length);
+        const fullPath = path.resolve(stagingDir, relativePath);
+        // Security: the path must stay inside the staging dir. The trailing
+        // separator stops a sibling such as ".staging-foo-evil" from passing.
+        if (!fullPath.startsWith(stagingRoot)) continue;
+
+        await fs.mkdir(path.dirname(fullPath), { recursive: true });
+        await fs.writeFile(fullPath, entry.getData());
       }
-      if (!relativePath) continue;
 
-      const fullPath = path.resolve(targetDir, relativePath);
-      const dir = path.dirname(fullPath);
-
-      // Security: ensure path doesn't escape target directory. Compare with a
-      // trailing separator so a sibling such as "plugins/foo-evil" cannot pass
-      // a prefix check against "plugins/foo".
-      if (!fullPath.startsWith(path.resolve(targetDir) + path.sep)) continue;
-
-      await fs.mkdir(dir, { recursive: true });
-      await fs.writeFile(fullPath, entry.getData());
+      const hadExisting = existsSync(targetDir);
+      if (hadExisting) await fs.rename(targetDir, backupDir);
+      try {
+        await fs.rename(stagingDir, targetDir);
+      } catch (swapError) {
+        if (hadExisting) await fs.rename(backupDir, targetDir);
+        throw swapError;
+      }
+      if (hadExisting) await fs.rm(backupDir, { recursive: true, force: true });
+    } finally {
+      await fs.rm(stagingDir, { recursive: true, force: true });
     }
 
     return NextResponse.json(

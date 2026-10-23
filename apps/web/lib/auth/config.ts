@@ -7,8 +7,7 @@ import { compare } from "bcryptjs";
 import { z } from "zod";
 
 import { prisma } from "@nextpress/db";
-import { SESSION_CONFIG } from "@nextpress/core/auth/auth-config";
-import type { SessionUser } from "@nextpress/core/auth/auth-types";
+import { authConfig } from "./auth.config";
 
 /**
  * Auth.js (NextAuth v5) configuration.
@@ -29,19 +28,10 @@ const credentialsSchema = z.object({
 });
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
+  // Edge-safe settings (secret, session, pages, session/authorized callbacks)
+  // are shared with middleware; see auth.config.ts.
+  ...authConfig,
   adapter: PrismaAdapter(prisma),
-  secret: process.env.AUTH_SECRET,
-
-  session: {
-    strategy: SESSION_CONFIG.strategy,
-    maxAge: SESSION_CONFIG.maxAge,
-    updateAge: SESSION_CONFIG.updateAge,
-  },
-
-  pages: {
-    signIn: "/login",
-    error: "/login",
-  },
 
   providers: [
     Credentials({
@@ -88,27 +78,29 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       },
     }),
 
-    // OAuth providers — only enabled if env vars are set
-    ...(process.env.GOOGLE_CLIENT_ID
+    // OAuth providers: enabled only when BOTH id and secret are set, so a
+    // half-configured provider is skipped instead of failing at sign-in.
+    ...(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET
       ? [
           Google({
             clientId: process.env.GOOGLE_CLIENT_ID,
-            clientSecret: process.env.GOOGLE_CLIENT_SECRET!,
+            clientSecret: process.env.GOOGLE_CLIENT_SECRET,
           }),
         ]
       : []),
 
-    ...(process.env.GITHUB_CLIENT_ID
+    ...(process.env.GITHUB_CLIENT_ID && process.env.GITHUB_CLIENT_SECRET
       ? [
           GitHub({
             clientId: process.env.GITHUB_CLIENT_ID,
-            clientSecret: process.env.GITHUB_CLIENT_SECRET!,
+            clientSecret: process.env.GITHUB_CLIENT_SECRET,
           }),
         ]
       : []),
   ],
 
   callbacks: {
+    ...authConfig.callbacks,
     /**
      * JWT callback: invoked on sign-in and on every request.
      * On sign-in (user is defined), embed our SessionUser fields.
@@ -130,49 +122,6 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
       return token;
     },
 
-    /**
-     * Session callback: shapes what `auth()` / `useSession()` returns.
-     * We attach our typed SessionUser to the session.
-     */
-    async session({ session, token }) {
-      if (token) {
-        session.user = {
-          id: token.id as string,
-          email: token.email as string,
-          name: token.name as string | null,
-          displayName: (token.displayName as string | null) ?? null,
-          image: token.picture as string | null,
-        } satisfies SessionUser as unknown as typeof session.user;
-      }
-      return session;
-    },
-
-    /**
-     * Authorized callback: runs in middleware to gate routes.
-     * Returns true/false. Route-level permission checks happen
-     * in the page/layout server components, not here.
-     */
-    authorized({ auth: session, request: { nextUrl } }) {
-      const isLoggedIn = !!session?.user;
-      const isAdminRoute = nextUrl.pathname.startsWith("/admin");
-      const isAuthRoute =
-        nextUrl.pathname.startsWith("/login") ||
-        nextUrl.pathname.startsWith("/register");
-
-      // Admin routes require authentication
-      if (isAdminRoute && !isLoggedIn) {
-        const loginUrl = new URL("/login", nextUrl.origin);
-        loginUrl.searchParams.set("callbackUrl", nextUrl.pathname);
-        return Response.redirect(loginUrl);
-      }
-
-      // Auth routes redirect to admin if already logged in
-      if (isAuthRoute && isLoggedIn) {
-        return Response.redirect(new URL("/admin", nextUrl.origin));
-      }
-
-      return true;
-    },
   },
 });
 

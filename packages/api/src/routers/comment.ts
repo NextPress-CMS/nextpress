@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { TRPCError } from "@trpc/server";
 import {
   router,
   publicProcedure,
@@ -24,8 +25,13 @@ export const commentRouter = router({
   submit: publicProcedure
     .input(submitCommentSchema)
     .mutation(async ({ ctx, input }) => {
+      // tRPC context carries a site only for signed-in users. Guests (the
+      // public comment form) use POST /api/v1/comments, which resolves the
+      // site from the request host.
       const siteId = ctx.auth?.siteId;
-      if (!siteId) throw new Error("Site context required");
+      if (!siteId) {
+        throw new TRPCError({ code: "BAD_REQUEST", message: "Guest comments must be posted to /api/v1/comments" });
+      }
       return commentService.submit(siteId, input, ctx.auth ?? null);
     }),
 

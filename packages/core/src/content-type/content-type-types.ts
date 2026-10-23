@@ -1,10 +1,10 @@
 import { z } from "zod";
-import { slugSchema } from "../validation/schemas";
+import { routeSlugSchema } from "../validation/schemas";
 
 // ── Input DTOs ──
 
 export const createContentTypeSchema = z.object({
-  slug: slugSchema,
+  slug: routeSlugSchema,
   nameSingular: z.string().min(1).max(100),
   namePlural: z.string().min(1).max(100),
   description: z.string().max(500).optional(),

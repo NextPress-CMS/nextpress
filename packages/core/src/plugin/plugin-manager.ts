@@ -56,7 +56,7 @@ export const pluginManager = {
     if (!existsSync(pluginsDir)) return [];
 
     const dirs = readdirSync(pluginsDir, { withFileTypes: true })
-      .filter((d) => d.isDirectory() && !d.name.startsWith("_"))
+      .filter((d) => d.isDirectory() && !d.name.startsWith("_") && !d.name.startsWith("."))
       .map((d) => d.name);
 
     discoveredPlugins = [];

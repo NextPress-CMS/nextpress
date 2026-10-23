@@ -13,8 +13,8 @@
  * frequent cron tick is cheap: sites that are not due are skipped without an
  * API call.
  *
- * SECURITY: POST only (synchronisation writes content), always gated on
- * CRON_SECRET, matching the existing publish cron.
+ * SECURITY: always gated on CRON_SECRET (constant-time compare). GET is
+ * accepted because Vercel Cron issues GET; without the secret nothing runs.
  */
 
 import { NextResponse } from "next/server";
@@ -22,16 +22,11 @@ import { prisma } from "@nextpress/db";
 import { ROLE_MAP } from "@nextpress/core/auth/roles";
 import type { AuthContext } from "@nextpress/core/auth/auth-types";
 import { createSyncService } from "@/lib/instagram/adapters";
+import { checkCronAuth } from "@/lib/cron";
 
-export async function POST(request: Request): Promise<Response> {
-  const cronSecret = process.env.CRON_SECRET;
-  if (!cronSecret) {
-    return NextResponse.json({ error: "CRON_SECRET not configured" }, { status: 403 });
-  }
-
-  if (request.headers.get("authorization") !== `Bearer ${cronSecret}`) {
-    return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
-  }
+async function run(request: Request): Promise<Response> {
+  const denied = checkCronAuth(request);
+  if (denied) return denied;
 
   const sites = await prisma.site.findMany({
     where: { isActive: true },
@@ -69,11 +64,6 @@ export async function POST(request: Request): Promise<Response> {
   );
 }
 
-/** Health check only — never performs a sync. */
-export async function GET(): Promise<Response> {
-  return NextResponse.json({ status: "ok", method: "Use POST to trigger synchronisation" });
-}
-
 /**
  * System auth context for cron.
  *
@@ -99,3 +89,6 @@ function systemAuth(siteId: string): AuthContext {
     permissions: new Set(admin?.permissions ?? []),
   };
 }
+
+export const GET = run;
+export const POST = run;

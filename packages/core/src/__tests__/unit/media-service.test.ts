@@ -2,16 +2,18 @@ import { describe, it, expect, vi, beforeEach } from "vitest";
 import { mockPrisma, resetMockPrisma } from "../mocks/prisma";
 
 vi.mock("@nextpress/db", () => ({ prisma: mockPrisma }));
+// Vitest 4 no longer lets arrow-function mocks be called with `new`, so the
+// storage backends are mocked as real classes.
 vi.mock("../../media/local-storage", () => ({
-  LocalStorage: vi.fn().mockImplementation(() => ({
-    put: vi.fn().mockResolvedValue({ key: "s1/2025/03/file.jpg", url: "/uploads/s1/2025/03/file.jpg" }),
-    delete: vi.fn().mockResolvedValue(undefined),
-    exists: vi.fn().mockResolvedValue(true),
-    getUrl: vi.fn((key: string) => `/uploads/${key}`),
-  })),
+  LocalStorage: class {
+    put = vi.fn().mockResolvedValue({ key: "s1/2025/03/file.jpg", url: "/uploads/s1/2025/03/file.jpg" });
+    delete = vi.fn().mockResolvedValue(undefined);
+    exists = vi.fn().mockResolvedValue(true);
+    getUrl = vi.fn((key: string) => `/uploads/${key}`);
+  },
 }));
 vi.mock("../../media/s3-storage", () => ({
-  S3Storage: vi.fn(),
+  S3Storage: class {},
 }));
 vi.mock("../../media/image-processor", () => ({
   getImageMeta: vi.fn().mockResolvedValue(null),

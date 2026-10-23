@@ -8,6 +8,10 @@ import {
 import { contentService } from "@nextpress/core/content/content-service";
 import { reviewWorkflow } from "@nextpress/core/content/review-workflow";
 import { prisma } from "@nextpress/db";
+import { TRPCError } from "@trpc/server";
+import { Prisma } from "@prisma/client";
+import { canEditContent } from "@nextpress/core/auth/permissions";
+import { blockDataSchema } from "@nextpress/core/validation/schemas";
 import {
   createContentEntrySchema,
   updateContentEntrySchema,
@@ -118,22 +122,28 @@ export const contentRouter = router({
     .input(
       z.object({
         id: z.string().cuid(),
-        title: z.string().optional(),
-        blocks: z.array(z.any()).optional(),
-        excerpt: z.string().optional().nullable(),
+        title: z.string().max(500).optional(),
+        // Same validation as an explicit save; autosave must not be a way to
+        // store malformed blocks.
+        blocks: z.array(blockDataSchema).optional(),
+        excerpt: z.string().max(5000).optional().nullable(),
       }),
     )
     .mutation(async ({ ctx, input }) => {
       const entry = await prisma.contentEntry.findFirst({
         where: { id: input.id, siteId: ctx.auth.siteId },
+        select: { id: true, authorId: true },
       });
       if (!entry) return { success: false };
+      if (!canEditContent(ctx.auth, entry.authorId).granted) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "You cannot edit this entry" });
+      }
 
       await prisma.contentEntry.update({
         where: { id: input.id },
         data: {
           ...(input.title !== undefined && { title: input.title }),
-          ...(input.blocks !== undefined && { blocks: input.blocks }),
+          ...(input.blocks !== undefined && { blocks: input.blocks as unknown as Prisma.InputJsonValue }),
           ...(input.excerpt !== undefined && { excerpt: input.excerpt }),
         },
       });

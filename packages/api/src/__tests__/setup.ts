@@ -3,7 +3,10 @@
  * Reuses core test setup + adds tRPC caller factory.
  */
 
-export { testPrisma, mockAuth, mockEditorAuth, mockContributorAuth, cleanDatabase } from "../../core/src/__tests__/setup";
+// Auth helpers come from the DB-free helpers module. Router tests that need a
+// real database should import testPrisma/cleanDatabase from core setup
+// directly, so DB-free tests run without DATABASE_URL.
+export { mockAuth, mockEditorAuth, mockContributorAuth } from "../../../core/src/__tests__/helpers";
 
 import { appRouter } from "../root";
 import { createCallerFactory } from "../trpc";

@@ -1,0 +1,7 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "crons": [
+    { "path": "/api/cron/publish", "schedule": "* * * * *" },
+    { "path": "/api/cron/instagram-sync", "schedule": "*/15 * * * *" }
+  ]
+}
