@@ -104,6 +104,118 @@ export const userRouter = router({
       };
     }),
 
+  /** Roles a user can be assigned (for role pickers) */
+  roles: permissionProcedure("list_users").query(async () => {
+    return prisma.role.findMany({
+      orderBy: { name: "asc" },
+      select: { slug: true, name: true, description: true },
+    });
+  }),
+
+  /** Get one user on the current site */
+  getById: permissionProcedure("list_users")
+    .input(z.object({ id: z.string().cuid() }))
+    .query(async ({ ctx, input }) => {
+      const membership = await prisma.userSite.findUnique({
+        where: { userId_siteId: { userId: input.id, siteId: ctx.auth.siteId } },
+        select: {
+          joinedAt: true,
+          role: { select: { slug: true, name: true } },
+          user: {
+            select: {
+              id: true,
+              email: true,
+              name: true,
+              displayName: true,
+              image: true,
+              bio: true,
+              createdAt: true,
+              _count: { select: { contentEntries: true } },
+            },
+          },
+        },
+      });
+      if (!membership) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+      const { _count, ...user } = membership.user;
+      return {
+        ...user,
+        entryCount: _count.contentEntries,
+        role: membership.role,
+        joinedAt: membership.joinedAt,
+      };
+    }),
+
+  /** Update a user's profile and, with promote_users, their role */
+  update: permissionProcedure("edit_users")
+    .input(
+      z.object({
+        id: z.string().cuid(),
+        name: z.string().min(1).max(200).optional(),
+        displayName: z.string().max(200).nullable().optional(),
+        bio: z.string().max(5000).nullable().optional(),
+        roleSlug: z.string().optional(),
+      }),
+    )
+    .mutation(async ({ ctx, input }) => {
+      const membership = await prisma.userSite.findUnique({
+        where: { userId_siteId: { userId: input.id, siteId: ctx.auth.siteId } },
+        select: { role: { select: { slug: true } } },
+      });
+      if (!membership) {
+        throw new TRPCError({ code: "NOT_FOUND", message: "User not found" });
+      }
+
+      const isAdmin = ctx.auth.role === "super_admin" || ctx.auth.role === "admin";
+      // Non-admins may not touch admin accounts at all.
+      if (!isAdmin && ["admin", "super_admin"].includes(membership.role.slug)) {
+        throw new TRPCError({ code: "FORBIDDEN", message: "Only admins can edit admin users" });
+      }
+
+      let roleId: string | undefined;
+      if (input.roleSlug && input.roleSlug !== membership.role.slug) {
+        if (!ctx.auth.permissions.has("promote_users")) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "You cannot change user roles" });
+        }
+        if (input.id === ctx.auth.user.id) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: "You cannot change your own role" });
+        }
+        if (input.roleSlug === "super_admin" && ctx.auth.role !== "super_admin") {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Only super admins can grant super admin" });
+        }
+        if (input.roleSlug === "admin" && !isAdmin) {
+          throw new TRPCError({ code: "FORBIDDEN", message: "Only admins can grant admin" });
+        }
+        const role = await prisma.role.findUnique({ where: { slug: input.roleSlug } });
+        if (!role) {
+          throw new TRPCError({ code: "BAD_REQUEST", message: `Role "${input.roleSlug}" not found` });
+        }
+        roleId = role.id;
+      }
+
+      await prisma.$transaction([
+        prisma.user.update({
+          where: { id: input.id },
+          data: {
+            ...(input.name !== undefined && { name: input.name }),
+            ...(input.displayName !== undefined && { displayName: input.displayName || null }),
+            ...(input.bio !== undefined && { bio: input.bio || null }),
+          },
+        }),
+        ...(roleId
+          ? [
+              prisma.userSite.update({
+                where: { userId_siteId: { userId: input.id, siteId: ctx.auth.siteId } },
+                data: { roleId },
+              }),
+            ]
+          : []),
+      ]);
+
+      return { success: true };
+    }),
+
   /** Create a new user on the current site */
   create: permissionProcedure("create_users")
     .input(

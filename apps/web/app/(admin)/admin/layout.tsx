@@ -64,6 +64,9 @@ export default async function AdminLayout({
       { href: "/admin/appearance/themes", label: "Themes", icon: "themes" },
     );
   }
+  if (await checkPermission("customize_theme")) {
+    navItems.push({ href: "/admin/appearance/customize", label: "Customize", icon: "customize" });
+  }
   if (perms.canManagePlugins) {
     navItems.push({ href: "/admin/plugins", label: "Plugins", icon: "plugins" });
   }

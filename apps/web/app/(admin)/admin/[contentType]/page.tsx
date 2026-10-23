@@ -34,7 +34,19 @@ export default async function DynamicContentListPage({
 
   return (
     <div>
-      <PageHeader title={ct.namePlural} />
+      <PageHeader
+        title={ct.namePlural}
+        actions={
+          perms.create_content ? (
+            <a
+              href={`/admin/${slug}/new`}
+              className="inline-flex items-center rounded-lg bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-xs hover:bg-indigo-700"
+            >
+              New {ct.nameSingular}
+            </a>
+          ) : undefined
+        }
+      />
       <PostListTable
         entries={result.items}
         total={result.total}

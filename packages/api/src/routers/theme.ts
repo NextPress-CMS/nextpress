@@ -59,6 +59,22 @@ export const themeRouter = router({
       themeManager.reset();
       return { success: true };
     }),
+  /**
+   * The active theme plus its settings schema (JSON-Schema-like, from
+   * theme.json) and saved customizations, for the customizer screen.
+   */
+  getActiveSettings: permissionProcedure("customize_theme").query(async ({ ctx }) => {
+    const install = await prisma.themeInstall.findFirst({ where: { siteId: ctx.auth.siteId, isActive: true } });
+    const slug = install?.slug ?? "default";
+    const discovered = themeManager.getDiscovered().find((d) => d.slug === slug);
+    return {
+      slug,
+      name: discovered?.manifest.name ?? slug,
+      hasInstall: !!install,
+      settings: (discovered?.manifest.settings ?? {}) as Record<string, unknown>,
+      customizations: (install?.customizations ?? {}) as Record<string, unknown>,
+    };
+  }),
   getCustomizations: authedProcedure.query(async ({ ctx }) => {
     const install = await prisma.themeInstall.findFirst({ where: { siteId: ctx.auth.siteId, isActive: true } });
     return (install?.customizations ?? {}) as Record<string, unknown>;
@@ -66,7 +82,18 @@ export const themeRouter = router({
   updateCustomizations: permissionProcedure("customize_theme")
     .input(z.object({ customizations: z.record(z.unknown()) }))
     .mutation(async ({ ctx, input }) => {
-      await prisma.themeInstall.updateMany({ where: { siteId: ctx.auth.siteId, isActive: true }, data: { customizations: input.customizations as unknown as Prisma.InputJsonValue } });
+      const customizations = input.customizations as unknown as Prisma.InputJsonValue;
+      const updated = await prisma.themeInstall.updateMany({ where: { siteId: ctx.auth.siteId, isActive: true }, data: { customizations } });
+      // A fresh site renders the "default" theme without an install row; create
+      // it so customizations are not silently dropped.
+      if (updated.count === 0) {
+        await prisma.themeInstall.upsert({
+          where: { siteId_slug: { siteId: ctx.auth.siteId, slug: "default" } },
+          update: { isActive: true, customizations },
+          create: { siteId: ctx.auth.siteId, slug: "default", version: "1.0.0", isActive: true, activatedAt: new Date(), customizations },
+        });
+      }
+      themeManager.reset();
       return { success: true };
     }),
 });
